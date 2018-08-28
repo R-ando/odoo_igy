@@ -7,6 +7,7 @@ class sale_order(models.Model):
     _inherit = 'sale.order'
     
     entete = fields.Text('Sujet'),
+    note = fields.Text('Terms and conditions'),
     
     @api.multi
     def action_config_order_line(self):
@@ -31,9 +32,11 @@ class sale_order(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
-#     @api.depends('largeur', 'hauteur')
-#     def _get_dimension(self):
-#         for line in self:
-#             line.dim = self.width + ' x ' + self.height
-#         
-#     dim = fields.Char('Dimension', compute='_get_dimension', readonly=True)
+    @api.depends('largeur', 'hauteur')
+    def _get_dimension(self):
+        for line in self:
+            line.dim = self.width + ' x ' + self.height
+         
+    #dim = fields.Char('Dimension', compute='_get_dimension', readonly=True)
+    
+    image = fields.Binary('Image')

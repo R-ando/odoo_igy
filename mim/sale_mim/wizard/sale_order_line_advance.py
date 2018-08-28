@@ -8,6 +8,7 @@ class SaleOrderLineaAdvance(models.TransientModel):
     _name = 'sale.order.line.advance'
     _description = 'Product configuration'
     
+    image = fields.Binary('Image'),
     order_id = fields.Many2one('sale.order.line', 'Order line')
     sujet = fields.Char('Sujet', readonly=True)
     select_type = fields.Many2one('product.product', 'Type', domain=[('categ_id', '=', 3)], change_default=True)
