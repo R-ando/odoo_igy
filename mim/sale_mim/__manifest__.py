@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     'name': 'Sale MIM',
     'version': '2.0',
@@ -8,7 +9,8 @@
     'website': 'http://www.ingenosya.mg',
     'depends': ['sale'],
     'data': [
-        '/wizard/sale_order_line_advance_view.xml',
+        'views/sale_view.xml',
+        'wizard/sale_order_line_advance_view.xml',
     ],
     'installable': True,
     'application': False,

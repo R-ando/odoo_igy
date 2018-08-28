@@ -3,6 +3,14 @@
 from odoo import fields, api, models
 
 
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+    
+    code = fields.Char('Code')
+    
+    _sql_constraints = [('code_unique', 'unique(code)', 'The product code must be unique')]
+    
+
 class ArticleCategorie(models.Model):
     _name = "article.categorie"
     _description = "Categorie d'article"
@@ -10,7 +18,7 @@ class ArticleCategorie(models.Model):
     name = fields.Char('Catégorie', size=64, required=True)
     
     _sql_constraints = [
-        ('name', 'unique(name)', 'The name of the category must be unique')]
+        ('name_unique', 'unique(name)', 'The name of the category must be unique')]
 
 
 class MimArticle(models.Model):
