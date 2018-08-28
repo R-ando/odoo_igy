@@ -9,7 +9,7 @@ class sale_order(models.Model):
     entete = fields.Text('Sujet'),
     
     @api.multi
-    def action_mim_wizard(self):
+    def action_config_order_line(self):
         self.ensure_one()
         ctx = dict()
         sujet = 'Devis ' + self.name

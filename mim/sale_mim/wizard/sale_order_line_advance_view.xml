@@ -31,8 +31,8 @@
 						<field name="quantity" />
 
 					</group>
-					<group class="oe_right" string="Total en Ariary">
-						<h2 class="oe_inline oe_right">
+					<group string="Total en Ariary">
+						<h2 class="oe_inline oe_left">
 							<field class="oe_inline" name="total" />
 							Ar
 						</h2>
