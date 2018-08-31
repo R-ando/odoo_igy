@@ -3,6 +3,12 @@
 from odoo import fields, api, models
 
 
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
+    
+    is_manufacture = fields.Boolean('Can be manufacture')
+    
+    
 class ProductProduct(models.Model):
     _inherit = 'product.product'
     

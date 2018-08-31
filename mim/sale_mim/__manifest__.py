@@ -7,10 +7,11 @@
     'description': """This module allows to add sales order lines with specific fields""",
     'author': 'Ingenosya Madagascar',
     'website': 'http://www.ingenosya.mg',
-    'depends': ['sale'],
+    'depends': ['sale', 'product'],
     'data': [
         'views/sale_view.xml',
         'wizard/sale_order_line_advance_view.xml',
+        'views/product_view.xml',
     ],
     'installable': True,
     'application': False,
