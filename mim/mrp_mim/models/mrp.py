@@ -15,7 +15,9 @@ class MrpBomLine(models.Model):
     component_exist = fields.Boolean(
         string="Composant existant",
         default=False)
-    component_id = fields.Integer(string="Composant")
+    component_id = fields.Many2one(
+        string="identifiant composant",
+        comodel_name="mrp.component")
 
     _sql_constraints = [('reference_unique', 'unique(ref)',
                          'Il y a des doublons dans la colonne référence!')]
@@ -28,7 +30,7 @@ class MrpBomLine(models.Model):
         component_exist = self.component_exist
         if not component_exist:
             return {
-                'name': _('Ajout des sous-composants'),
+                'name': _('Ajouter sous-composants'),
                 'res_model': 'mrp.component',
                 'type': 'ir.actions.act_window',
                 'view_id': view_ref.id,
@@ -46,7 +48,7 @@ class MrpBomLine(models.Model):
             return {
                 'name': _('Modifier sous-composants'),
                 'res_model': 'mrp.component',
-                'res_id': component_id,
+                'res_id': component_id.id,
                 'type': 'ir.actions.act_window',
                 'view_id': view_ref.id,
                 'view_mode': 'form',
@@ -100,10 +102,7 @@ class MrpComponent(models.Model):
     line_id = fields.Many2one(
         string="BOM Line parent",
         comodel_name="mrp.bom.line",
-        default=_get_line_id)
-    component_exist = fields.Boolean(
-        string="Composant existant",
-        default=_get_component_exist)
+        default="_get_line_id")
     variable = fields.Text(
         string="Variable utilisables",
         help="Variables utilisables dans les calculs en code python",
@@ -124,48 +123,12 @@ class MrpComponent(models.Model):
     sub_component_ids = fields.One2many(
         string="Sous-composants",
         comodel_name="mrp.sub.component",
-        inverse_name="component_id")
+        inverse_name="component_id",
+        copy=True)
 
-    def save_component(self):
-        comp_obj = self.env['mrp.component']
-        bom_line_obj = self.env['mrp.bom.line']
-        comp = self
-
-        vals = {
-            'product_parent_id': comp.product_parent_id.id,
-            'line_id': comp.line_id.id,
-            'component_exist': True,
-        }
-        comp_obj.write(vals)
-
-        val = {
-            'component_exist': True,
-            'component_id': self.ids
-        }
-        bom_line_obj.write(val)
-
-        return {'type': 'ir.actions.act_window_close'}
-
-
-class MrpProductionProductLine(models.Model):
-    _inherit = 'mrp.production.product.line'
-
-    is_accessory = fields.Boolean(string="Est un accessoire")
-    line_id = fields.Many2one(
-        string="BOM line parent",
-        comodel_name="mrp.bom.line")
-
-
-class MrpProductionProductComponentLine(models.Model):
-    _name = 'mrp.production.product.component.line'
-    _description = 'Production component'
-
-    ref = fields.Char(string="Référence")
-    name = fields.Char(string="Déscription")
-    product_qty = fields.Float(string="Quantité unitaire")
-    product_qty_total = fields.Float(string="Quantité total")
-    len_unit = fields.Float(string="Longueur unitaire")
-    len_total = fields.Float(string="Longueur total")
-    production_id = fields.Many2one(
-        string="Production Order",
-        comodel_name="mrp.production")
+    @api.model
+    def create(self, vals):
+        record = super(MrpComponent, self).create(vals)
+        record.line_id.component_exist = True
+        record.line_id.component_id = record
+        return record

@@ -6,7 +6,7 @@
       <field name="inherit_id" ref="mrp.mrp_bom_form_view" />
       <field name="arch" type="xml">
           <xpath expr="//field[@name='bom_line_ids']//field[@name='product_id']" position="after">
-              <button type="object" name="open_view_component" string="Ajout des sous-composants" />
+              <button type="object" name="open_view_component" string="Sous-composants" />
           </xpath>
           <xpath expr="//field[@name='bom_line_ids']//field[@name='product_uom_id']" position="after">
               <field name="is_accessory" />
@@ -22,7 +22,6 @@
 	        <form>
 	        	<group string="Généralités">
 	        		<field name="product_parent_id" />
-	        		<field name="component_exist" invisible="1"/>
 	        	</group>
 	        	<group string="Calcul (Code Python)">
 	        		<field name="variable" readonly="1"/>
@@ -38,11 +37,7 @@
                         </tree>
                     </field>
                 </group>
-                <footer>
-                    <button class="oe_highlight" type="object" name="save_component" string="Enregistrer" attrs="{'invisible': [('component_exist', '!=', False)]}" />
-                    or
-                    <button class="oe_link" special="cancel" string="Cancel" />
-                </footer>
+               
 	        </form>
 	    </field>
 	</record>
