@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-	<record id="view_mim_wizard" model="ir.ui.view">
-		<field name="name">Mim wizard</field>
+	<record id="sale_order_line_advance_form_view" model="ir.ui.view">
+		<field name="name">sale.order.line.advance.form</field>
 		<field name="model">sale.order.line.advance</field>
 		<field name="arch" type="xml">
-			<form string="Mim wizard" version="7.0">
+			<form string="Configuration d'article" version="7.0">
 				<h1>
 					<field name="sujet" />
 				</h1>
 				<group>
-
 					<group string="Désignation">
-
+						<field name="image" widget="image" class="style_image"/>
 						<field name="select_type" />
 						<field name="type_fixe"
 							attrs="{'invisible':[('select_type','!=','fixe')]}" />
@@ -89,12 +88,6 @@
 				<field class="oe_inline" name="cacher" invisible="1" />
 				<field class="oe_inline" name="hidder_autre_option"
 					invisible="1" />
-				<footer>
-					<button name="order_line_create" string="Ajouter"
-						type="object" class="oe_highlight" />
-					or
-					<button string="Cancel" class="oe_link" special="cancel" />
-				</footer>
 			</form>
 		</field>
 	</record>

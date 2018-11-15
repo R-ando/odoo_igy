@@ -1,14 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-	<record id="product_category_form_view" model="ir.ui.view">
-		<field name="name">product.category.form.inherit</field>
-		<field name="model">product.category</field>
-		<field name="inherit_id"
-			ref="product.product_category_form_view" />
-		<field name="arch" type="xml">
-			<xpath expr="//field[@name='parent_id']" position="after">
-				<field name="is_manufacture" />
-			</xpath>
-		</field>
-	</record>
+    
+<!-- Categories views -->
+    <!-- Categories search view -->
+    <record model="ir.ui.view" id="article_categorie_search_view">
+        <field name="name">article.categorie.search.view</field>
+        <field name="model">article.categorie</field>
+        <field name="arch" type="xml">
+            <search string="Categories">
+                <field name="name" string="Categorie"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Categories tree view -->
+    <record model="ir.ui.view" id="article_categorie_tree_view">
+        <field name="name">article.categorie.tree.view</field>
+        <field name="model">article.categorie</field>
+        <field name="field_parent"></field>
+        <field name="arch" type="xml">
+            <tree string="Categorie d'articles">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Categories form view -->
+    <record model="ir.ui.view" id="article_categorie_form_view">
+        <field name="name">article.categorie.form.view</field>
+        <field name="model">article.categorie</field>
+        <field name="arch" type="xml">
+            <form string="Categorie des articles" version="7.0">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Categories action view -->
+    <record model="ir.actions.act_window" id="article_categorie_action_view">
+        <field name="name">Catégories d'article MIM</field>
+        <field name="res_model">article.categorie</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="article_categorie_search_view"/>
+    </record>
+
+
+<!-- Article MIM views -->
+    <!-- Article MIM search view -->
+    <record model="ir.ui.view" id="mim_article_search_view">
+        <field name="name">mim.article.search.view</field>
+        <field name="model">mim.article</field>
+        <field name="arch" type="xml">
+            <search string="Mim article">
+                <field name="name" string="Mim article"/>
+                <field name="category_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Article MIM tree view -->
+    <record model="ir.ui.view" id="mim_article_tree_view">
+        <field name="name">mim.article.tree.view</field>
+        <field name="model">mim.article</field>
+        <field name="arch" type="xml">
+        <tree string="Articles">
+            <field name="name"/>
+            <field name="price"/>
+        </tree>
+        </field>
+    </record>
+
+    <!-- Article MIM form view -->
+    <record model="ir.ui.view" id="mim_article_form_view">
+        <field name="name">mim.article.form</field>
+        <field name="model">mim.article</field>
+        <field name="arch" type="xml">
+            <form string="Article MIM" version="7.0">
+                <header>
+                </header>
+                <sheet>
+                    <label for="name" class="oe_edit_only"/>
+                    <h1><field name="name"/></h1>
+                    <label for="price" class="oe_edit_only"/>
+                    <field name="price"/>
+                    <label for="category_id" class="oe_edit_only"/>
+                    <field name="category_id"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Categories action view -->
+    <record model="ir.actions.act_window" id="mim_article_action_view">
+        <field name="name">Mim articles</field>
+        <field name="res_model">mim.article</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="mim_article_search_view"/>
+    </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Menu article categorie -->    
+    <menuitem 
+        name="Articles MIM" 
+        parent="sale.sale_order_menu" 
+        id="article_mim_menu_root" 
+        sequence="20"/>
+
+    <menuitem 
+        name="Categories" 
+        parent="article_mim_menu_root" 
+        id="article_categorie_menu" 
+        action="article_categorie_action_view" />
+
+    <menuitem 
+        name="Articles" 
+        parent="article_mim_menu_root" 
+        id="mim_article_menu" 
+        action="mim_article_action_view" 
+        sequence="1"/>
+
+
+
+
+
+
+
+
+    <record id="product_category_form_view" model="ir.ui.view">
+        <field name="name">product.category.form.inherit</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id"
+            ref="product.product_category_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="is_manufacture" />
+            </xpath>
+        </field>
+    
+    </record>
 </odoo>

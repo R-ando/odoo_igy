@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api
 
 
 class MrpProduction(models.Model):
@@ -31,7 +31,7 @@ class MrpProduction(models.Model):
         string="Fiche de débit calculée")
     partner_name = fields.Char(
         string="Nom du client",
-        default=_get_partner_name)
+        compute='_get_partner_name')
     largeur = fields.Float(
         string="Largeur")
     hauteur = fields.Float(
@@ -73,3 +73,8 @@ class MrpProduction(models.Model):
         string=u"Bâtis")
     longueur_barre = fields.Float(
         string="Longueur barre")
+
+    @api.depends('partner_id')
+    def _get_partner_name(self):
+        for production in self:
+            production.partner_name = production.partner_id.name

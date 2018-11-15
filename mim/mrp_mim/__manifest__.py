@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'MRP MIM',
+    'name': 'Mrp MIM',
     'version': '2.0',
-    'description': """Ce module permet de creer un ordre de fabrication avancees en fonction du nombre, de la largeur et de la hauteur d\'un article. Ce module requiert l\'installation des modules suivants :\n
-    * mrp
-    * mim_module
-    * stock
-    """,
-    'author': 'INGENOSYA',
+    'description':
+        u"""Ce module permet de créer un ordre de fabrication avancées
+        en fonction du nombre, de la largeur et de la hauteur d\'un article.
+        Ce module requiert l\'installation des modules suivants :\n
+            * mrp
+            * mim_module
+            * stock
+            """,
+    'author': 'Ingenosya Madagascar',
     'sequence': 1,
     'website': 'http://mim-madagascar.com',
     'depends': ['mrp', 'product'],
