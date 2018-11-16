@@ -10,13 +10,13 @@ class ProductCategory(models.Model):
         string="Can be manufacture")
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
+# class ProductProduct(models.Model):
+#     _inherit = 'product.product'
 
-    code = fields.Char(
-        string="Code")
-    _sql_constraints = [
-        ('code_unique', 'unique(code)', 'The product code must be unique')]
+#     code = fields.Char(
+#         string="Code")
+#     _sql_constraints = [
+#         ('code_unique', 'unique(code)', 'The product code must be unique')]
 
 
 class ArticleCategorie(models.Model):

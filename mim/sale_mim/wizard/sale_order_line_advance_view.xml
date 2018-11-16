@@ -35,24 +35,24 @@
 							<field class="oe_inline" name="total" />
 							Ar
 						</h2>
-
 					</group>
+
 					<group string="Vitrage"
 						attrs="{'invisible':[('cacher','=',True)]}">
 						<field name="vitre" />
 						<field name="type_vitre" string="Simple/Double" />
 						<field name="decoratif" />
 					</group>
+
 					<group string="Accessoires"
 						attrs="{'invisible':[('cacher','=',True)]}">
 						<group>
 							<field name="poigne" />
-							<field name="nb_poigne" />
+							<field name="nb_poigne" attrs="{'invisible':[('poigne','=',False)]}" />
 						</group>
-
 						<group>
 							<field name="serr" />
-							<field name="nb_serr" />
+							<field name="nb_serr" attrs="{'invisible':[('serr','=',False)]}" />
 						</group>
 						<group>
 							<field name="oscillo_battant" />
@@ -60,6 +60,7 @@
 							<field name="butoir" />
 						</group>
 					</group>
+
 					<group string="Autres options"
 						attrs="{'invisible':[('hidder_autre_option','=',True)]}">
 						<field name="remplissage_vitre"
@@ -81,13 +82,19 @@
 							attrs="{'invisible':[('cacher','=',True)]}" />
 						<field name="tms"
 							attrs="{'invisible':[('cacher','=',True)]}" />
-
 					</group>
 				</group>
+
 				<field class="oe_inline" name="totalcacher" invisible="1" />
 				<field class="oe_inline" name="cacher" invisible="1" />
 				<field class="oe_inline" name="hidder_autre_option"
 					invisible="1" />
+				<footer>
+					<button name="order_line_create" string="Ajouter"
+						type="object" class="oe_highlight" />
+					or
+					<button string="Cancel" class="oe_link" special="cancel" />
+				</footer>
 			</form>
 		</field>
 	</record>

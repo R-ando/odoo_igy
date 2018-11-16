@@ -1,17 +1,20 @@
 # - * - coding: utf-8 - * -
+from odoo.exceptions import UserError
 import base64
-from odoo import api, fields, models
+from odoo import api, fields, models, _, tools
 from odoo import modules
 import odoo.addons.decimal_precision as dp
 import logging
 _logger = logging.getLogger(__name__)
+
 
 class SaleOrderLineAdvance(models.TransientModel):
     _name = 'sale.order.line.advance'
     _description = 'Product configuration'
 
 #   Add_image
-    image = fields.Binary('Image')
+    image = fields.Binary(
+        string="Image")
     order_id = fields.Many2one(
         string="Order Line",
         comodel_name="sale.order.line")
@@ -155,8 +158,6 @@ class SaleOrderLineAdvance(models.TransientModel):
         'intermediaire')
     def _compute_total(self):
         select_type = self.select_type
-        type_fix = self.type_fixe
-        inegalite = self.inegalite
         vitre = self.vitre
         type_vitre = self.type_vitre
         decoratif = self.decoratif
@@ -184,14 +185,12 @@ class SaleOrderLineAdvance(models.TransientModel):
         quantity = self.quantity
 
         val_total = 0.0
-        val_types = 0.0
         val_vitre = 0.0
         val_type_vitre = 1
         val_autre_vitrage = 0.0
         val_decoratif = 0.0
         val_poigne = 0.0
         val_serr = 0.0
-        val_serr_a_cle = 0.0
         val_oscillo_battant = 0.0
         val_va_et_vient = 0.0
         val_butoir = 0.0
@@ -200,10 +199,8 @@ class SaleOrderLineAdvance(models.TransientModel):
         val_triangle = 1
         val_laque = 1
         val_moustiquaire = 0.0
-        val_tms = tms / 100
         cacher = False
         hidder_autre_option = False
-        cacherlh = False
         types = ""
 
         if vitre:
@@ -376,6 +373,15 @@ class SaleOrderLineAdvance(models.TransientModel):
         if order_obj.company_id:
             maj_globale = order_obj.company_id.maj_globale / 100
 
+#   Erreur si certains champs ne sont pas correctement remplis
+        if largeur is False or largeur == 0:
+            msg = _(u'Le champ Largeur ne peut pas être vide ou égal à 0')
+            raise UserError(msg)
+
+        if hauteur is False or hauteur == 0:
+            msg = _(u'Le champ Hauteur ne peut pas être vide ou égal à 0')
+            raise UserError(msg)
+
         self.total = ((val_total * quantity * 1.10) * (1 + maj1 + maj2)) * (1 + maj_globale)
         self.totalcacher = ((val_total * quantity * 1.10) * (1 + maj1 + maj2)) * (1 + maj_globale)
         self.cacher = cacher
@@ -479,41 +485,43 @@ class SaleOrderLineAdvance(models.TransientModel):
 
         with open(modules.get_module_resource('sale_mim', 'static/src/img', (image_name)), 'rb') as f:
             image = base64.b64encode(f.read())
+        resized_image = tools.image_resize_image_medium(image, size=(128, 64))
 
-        self.image = image
+        self.image = resized_image
 
 #   Créer une ligne de commande à partir du pop-up
-    @api.model
-    def create(self, vals):
-        record = super(SaleOrderLineAdvance, self).create(vals)
-        select_type = record.select_type
-        type_fix = record.type_fixe
-        inegalite = record.inegalite
-        vitrage = record.vitre
-        type_vitre = record.type_vitre
-        decoratif = record.decoratif
-        serr = record.serr
-        poigne = record.poigne
-        oscillo_battant = record.oscillo_battant
-        va_et_vient = record.va_et_vient
-        butoir = record.butoir
-        remplissage_vitre = record.remplissage_vitre
-        cintre = record.cintre
-        triangle = record.triangle
-        division = record.division
-        nb_division = record.nb_division
-        laque = record.laque
-        moustiquaire = record.moustiquaire
-        type_moustiquaire = record.type_moustiquaire
-        tms = record.tms
-        rec_largeur = record.largeur
-        rec_hauteur = record.hauteur
-        intermediaire = record.intermediaire
-        rec_dimension = record.dimension
-        rec_pu_ttc = record.pu_ttc
-        rec_qty = record.quantity
-        image = record.image
-        total = record.total
+    def order_line_create(self, vals):
+        order_id = self.order_id.id
+        select_type = self.select_type
+        type_fix = self.type_fixe
+        inegalite = self.inegalite
+        vitrage = self.vitre
+        type_vitre = self.type_vitre
+        decoratif = self.decoratif
+        serr = self.serr
+        nb_serr = self.nb_serr
+        poigne = self.poigne
+        nb_poigne = self.nb_poigne
+        oscillo_battant = self.oscillo_battant
+        va_et_vient = self.va_et_vient
+        butoir = self.butoir
+        remplissage_vitre = self.remplissage_vitre
+        cintre = self.cintre
+        triangle = self.triangle
+        division = self.division
+        nb_division = self.nb_division
+        laque = self.laque
+        moustiquaire = self.moustiquaire
+        type_moustiquaire = self.type_moustiquaire
+        tms = self.tms
+        rec_largeur = self.largeur
+        rec_hauteur = self.hauteur
+        intermediaire = self.intermediaire
+        rec_dimension = self.dimension
+        rec_pu_ttc = self.pu_ttc
+        rec_qty = self.quantity
+        image = self.image
+        total = self.total
         _logger.info("\n*****select_type = %s*****\n" % self)
         types = select_type.name
         vitre = ''
@@ -557,10 +565,10 @@ class SaleOrderLineAdvance(models.TransientModel):
         if ((vitrage.name is False) or (vitrage.name is None)):
             vitre = '\n - Vitrage : standard, '
         else:
-            vitre = u"\n - Vitrage : "+vitrage.name+", "
+            vitre = u"\n - Vitrage : " + vitrage.name + ", "
 
         if ((poigne.name is not None) and (poigne.name is not False)):
-                poignee = u''+poigne.name+''
+            poignee = u'' + poigne.name + ''
 
         if butoir:
             btr = " avec butoir, "
@@ -582,7 +590,7 @@ class SaleOrderLineAdvance(models.TransientModel):
                 remplissage_vitre = u'1/3 pleine'
             if remplissage_vitre == u'pleine_bardage':
                 remplissage_vitre = u'Pleine/bardage'
-            rempli = " "+str(remplissage_vitre)+", "
+            rempli = " " + str(remplissage_vitre) + ", "
 
         if cintre:
             ctr = u" cintré, "
@@ -597,16 +605,15 @@ class SaleOrderLineAdvance(models.TransientModel):
             mstqr = "  avec moustiquaire "
 
         if division:
-            if(nb_division>1):
-                dvs = " "+str(nb_division)+" divisions, "
+            if(nb_division > 1):
+                dvs = " " + str(nb_division) + " divisions, "
             else:
-                dvs = " "+str(nb_division)+" division, "
+                dvs = " " + str(nb_division) + " division, "
 
-        type_porte = ''
         if tms != 0.0:
             tmss = " TMS, "
-            type_porte =u'Fenêtre'
 
+        type_porte = u'Fenêtre'
         if types == 'Coulissante 2VTX':
             if tms != 0.0:
                 type_porte = 'Porte'
@@ -621,7 +628,7 @@ class SaleOrderLineAdvance(models.TransientModel):
                     serrure = u' 2 serrures encastrées 2 points'
                 else:
                     serrure = u' 1 poignee et 1 serrures encastrées 2 points'
-            types = u" "+type_porte+" Coulissante 2VTX "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" "+serrure+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" " + type_porte + " Coulissante 2VTX " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " " + serrure + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Coulissante 1VTL':
             serrure = ''
@@ -635,10 +642,10 @@ class SaleOrderLineAdvance(models.TransientModel):
                     serrure = u' 2 serrures encastrées 2 points'
                 else:
                     serrure = u' 1 poignée 2 points'
-            types = u"Porte Coulissante 1VTL "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" "+serrure+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u"Porte Coulissante 1VTL " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " " + serrure + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Glandage':
-            types = "Glandage"+"\n"
+            types = "Glandage" + "\n"
 
         if types == 'Coulissante 3VTX':
             if tms != 0.0:
@@ -654,7 +661,7 @@ class SaleOrderLineAdvance(models.TransientModel):
                     serrure = u' 2 serrures encastrées 2 points'
                 else:
                     serrure = u' 1 poignée et 1 serrures encastrées 2 points'
-            types = u" "+type_porte+" Coulissante 3VTX "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" "+serrure+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" " + type_porte + " Coulissante 3VTX " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " " + serrure + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Coulissante 4VTX':
             if tms != 0.0:
@@ -670,73 +677,100 @@ class SaleOrderLineAdvance(models.TransientModel):
                     serrure = u' 3 serrures encastrées 2 points'
                 else:
                     serrure = u' 1 poignée et 2 serrures encastrées 2 points'
-            types = u" "+type_porte+" Coulissante 4VTX "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" "+serrure+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" " + type_porte + " Coulissante 4VTX " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " " + serrure + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Porte ouvrante 1VTL':
-            types = u" Porte ouvrante 1VTL "+"\n - Accessoires :"+" ".join((tmss+" "+intermdr+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" Porte ouvrante 1VTL " + "\n - Accessoires :" + " ".join((tmss + " " + intermdr + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == u'Fenêtre ouvrante 1VTL':
-            types = u" Fenêtre ouvrante 1VTL  "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" Fenêtre ouvrante 1VTL  " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Porte ouvrante 2VTX':
-            types = u" Porte ouvrante 2VTX  "+"\n - Accessoires :"+" ".join((inegalit+" "+tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" Porte ouvrante 2VTX  " + "\n - Accessoires :" + " ".join((inegalit + " " + tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == u'Fenêtre ouvrante 2VTX':
-            types = u" Fenêtre ouvrante 2VTX  "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" Fenêtre ouvrante 2VTX  " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'A soufflet':
-            types = u" A soufflet  "+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u" A soufflet  " + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Fixe':
             if type_fix:
                 if type_fix == 'imposte':
-                    types = "Imposte Fixe"+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+                    types = "Imposte Fixe" + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
                 if type_fix == 'soubassement':
-                    types = "Soubassement Fixe"+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+                    types = "Soubassement Fixe" + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
                 if type_fix == 'lateral':
-                    types = u"Latéral Fixe"+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+                    types = u"Latéral Fixe" + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
             else:
-                types = u"Fixe"+"\n"
+                types = u"Fixe" + "\n"
 
         if types == 'Moustiquaire':
-            types = u"Moustiquaire indépendant"+"\n"
+            types = u"Moustiquaire indépendant" + "\n"
 
         if types == 'Naco':
-            types = u"Naco"+"\n - Accessoires :"+" ".join((tmss+" "+dvs+" "+btr+" "+oscillo+" "+v_et_v+" "+ctr+" "+lq+" "+trgl+" ").split())+vitre+" ".join((simple_double+deco+" "+rempli+" "+mstqr).split())+" \n"
+            types = u"Naco" + "\n - Accessoires :" + " ".join((tmss + " " + dvs + " " + btr + " " + oscillo + " " + v_et_v + " " + ctr + " " + lq + " " + trgl + " ").split()) + vitre + " ".join((simple_double + deco + " " + rempli + " " + mstqr).split()) + " \n"
 
         if types == 'Poteau rectangle' or 'Poteau d\'angle' or 'Tendeur':
             if types == 'Poteau rectangle':
-                types = "Poteau rectangle"+"\n"
+                types = "Poteau rectangle" + "\n"
             if types == 'Poteau d\'angle':
-                types = "Poteau d'angle"+"\n"
+                types = "Poteau d'angle" + "\n"
             if types == "Tendeur":
-                types = "Tendeur"+"\n"
+                types = "Tendeur" + "\n"
 
         if types == 'Bardage PVC':
-            types = "Bardage PVC"+"\n"
+            types = "Bardage PVC" + "\n"
 
         if types == 'Projetant':
-            types = "Projetant"+"\n"
+            types = "Projetant" + "\n"
 
         lxh = types
         if types == 'Poteau rectangle':
             if (rec_dimension and rec_pu_ttc):
-                lxh = lxh+" \n\t - Dimension : %d x %d \n"%(rec_dimension, rec_pu_ttc,)
+                lxh = lxh + " \n\t - Dimension : %d x %d \n" % (rec_dimension, rec_pu_ttc,)
         else:
             if(rec_largeur and rec_hauteur):
-                lxh = lxh+"- Dimension : %d x %d HT \n"%(rec_largeur, rec_hauteur,)
+                lxh = lxh + "- Dimension : %d x %d HT \n" % (rec_largeur, rec_hauteur,)
 
         name = lxh
+        resized_image = tools.image_resize_image_medium(image, size=(96, 64))
 
         order_line_vals = {
             'product_id': select_type.id,
             'name': name,
-            'order_id': self._context.get('active_id'),
+            'image': resized_image,
+            'order_id': order_id,
             'product_uom_qty': rec_qty,
             'price_subtotal': total,
             'price_unit': rec_qty and (total / rec_qty),
+            'largeur': rec_largeur,
+            'hauteur': rec_hauteur,
+            'dimension': rec_dimension,
+            'vitre': vitrage.id,
+            'type_vitre': type_vitre,
+            'decoratif': decoratif.id,
+            'poigne': poigne.id,
+            'nb_poigne': nb_poigne,
+            'serr': serr.id,
+            'nb_serr': nb_serr,
+            'oscillo_battant': oscillo_battant,
+            'va_et_vient': va_et_vient,
+            'butoir': butoir,
+            'remplissage_vitre': remplissage_vitre,
+            'type_fixe': type_fix,
+            'inegalite': inegalite,
+            'cintre': cintre,
+            'triangle': triangle,
+            'division': division,
+            'nb_division': nb_division,
+            'laque': laque,
+            'moustiquaire': moustiquaire,
+            'tms': tms,
+            'type_moustiquaire': type_moustiquaire,
+            'intermediaire': intermediaire
         }
         _logger.info("\n*****order_line_vals = %s*****\n" % order_line_vals)
         self.env['sale.order.line'].create(order_line_vals)
 
-        return record
+        return True

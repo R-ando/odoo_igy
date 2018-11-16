@@ -1,24 +1,31 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Mrp MIM',
-    'version': '2.0',
-    'description':
-        u"""Ce module permet de créer un ordre de fabrication avancées
-        en fonction du nombre, de la largeur et de la hauteur d\'un article.
-        Ce module requiert l\'installation des modules suivants :\n
-            * mrp
-            * mim_module
-            * stock
-            """,
-    'author': 'Ingenosya Madagascar',
+    'name': "Gestion de Fabrication MIM",
+
+    'summary': """ """,
+
+    'description': u"""
+        Gestion des fabrications de MIM:
+            - Articles composés par des sous-composants
+            - Ordre de fabrication avancé : largeur, hauteur
+    """,
+
+    'author': "Ingenosya Madagascar",
+    'website': "http://www.ingenosya.mg",
+    'category': 'Mrp',
+    'version': '3.0',
     'sequence': 1,
-    'website': 'http://mim-madagascar.com',
+    # any module necessary for this one to work correctly
     'depends': ['mrp', 'product'],
+
+    # always loaded
     'data': [
         'views/mrp_bom_view.xml',
-        'views/mrp_production_view.xml', ],
-    'test': [],
-    'installable': True,
+        'views/mrp_production_view.xml',
+    ],
+
+    'icon': 'mrp_mim/static/src/img/icon.png',
     'application': True,
-    'images': [],
+    'installable': True,
+    'auto_install': False,
 }
