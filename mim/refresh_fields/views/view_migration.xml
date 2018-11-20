@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    	
+
+    <record model="ir.ui.view" id="migrate_fields_view">
+        <field name="name">Migration des champs calculés</field>
+        <field name="model">migrate.fields</field>
+        <field name="type">form</field>
+        <field name="priority">0</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="model_ids" widget="many2many_tags" options="{'no_create_edit':True, 'no_create':True}" />
+            </form>
+            <footer>
+                <button class="oe_highlight" type="object" name="excecute" string="Mettre à jour" />
+                or
+                <button class="oe_link" special="cancel" string="Annuler" />
+            </footer>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="migrate_fields_action_view">
+        <field name="name">Mise à jour des champs calculés</field>
+        <field name="res_model">migrate.fields</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="migrate_fields_view" />
+    </record>
+
+	<menuitem id="main_migrate_fields" name="MAJ des champs calculés" parent="base.menu_administration" />
+
+	<menuitem id="menu_migrate_fields" name="Mise à jour des champs calculés" parent="main_migrate_fields" action="migrate_fields_action_view" />
+
+</odoo>

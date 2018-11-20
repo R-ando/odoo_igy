@@ -36,7 +36,7 @@ class MrpBomLine(models.Model):
 #       Si la configuration du composant n'existe pas encore, elle sera créée
         if not component_exist:
             return {
-                'name': _('Ajouter sous-composants'),
+                'name': _('Configuration des composants'),
                 'res_model': 'mrp.component',
                 'type': 'ir.actions.act_window',
                 'view_id': view_ref.id,
@@ -54,7 +54,7 @@ class MrpBomLine(models.Model):
         else:
             component_id = self.component_id
             return {
-                'name': _('Modifier sous-composants'),
+                'name': _('Configuration des composants'),
                 'res_model': 'mrp.component',
                 'res_id': component_id.id,
                 'type': 'ir.actions.act_window',

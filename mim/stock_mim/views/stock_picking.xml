@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Picking search view -->
+
+    <!-- Picking tree view -->
+    <record model="ir.ui.view" id="view_stock_picking_tree">
+        <field name="name">stock.picking.tree.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="type">tree</field>
+        <field name="inherit_id" ref="stock.vpicktree" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="date" string="Date de livraison" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='scheduled_date']" position="replace">
+                <field name="scheduled_date" string="Date de la contre-mesure"/>
+            </xpath>
+            <xpath expr="//field[@name='scheduled_date']" position="after">
+                <field name ="late_production" />
+                <field name ="late_delivery" />
+                <field name="mo_created" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Picking form view -->
+    <record model="ir.ui.view" id="view_stock_picking_form">
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+
+            <!-- Différents dates -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="mo_created" />
+                <field name="date_changed" string="Date de la contre-mesure" invisible="1" />
+                <field name="motivation" class="oe_edit_only" placeholder="Veuillez saisir la motivation de la modification" attrs="{'invisible': [('date_changed','=',False)]}" />
+            </xpath>
+
+            <xpath expr="//field[@name='scheduled_date']" position="before">
+                <field name="date" string="Date de livraison" readonly="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='scheduled_date']" position="replace">
+                <field name="scheduled_date" string="Date de la contre-mesure"/>
+            </xpath>
+
+            <xpath expr="//field[@name='scheduled_date']" position="after">
+                <field name ="production_date" />
+                <field name ="late_production" />
+                <field name ="delivery_date" />
+                <field name ="late_delivery" />
+            </xpath>
+
+            <!-- Boutons sur la ligne state -->
+            <xpath expr="//field[@name='state']" position="before">
+                <button name="split_picking"
+                    states="draft,confirmed,assigned,partially_available"
+                    string="Diviser"
+                    class="oe_highlight"
+                    groups="stock_mrp.stock_mrp_mamy"
+                    type="object" />
+                  
+                <button name="confirm_config_mo"
+                    string="Créer les ordres de fabrication"
+                    class="oe_highlight"
+                    groups="stock_mrp.stock_mrp_mamy"
+                    type="object"
+                    attrs="{'invisible': ['|',('mo_created','=',True),('state','not in',('confirmed'))]}" />
+                
+                <button name="view_all_mo"
+                    string="Voir les ordres de fabrication"
+                    class="oe_highlight"
+                    type="object"
+                    attrs="{'invisible': ['|',('mo_created','=',False),('state','not in',('confirmed','partially_available','assigned','done'))]}" />
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

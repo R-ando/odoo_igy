@@ -271,17 +271,17 @@ class SaleOrderLineAdvance(models.TransientModel):
         if types == 'Coulissante 1VTL':
             if moustiquaire:
                 val_moustiquaire = (((largeur / 2 * hauteur) / 1000000 * 13500) * 1.2 * 1.08 * 1.4)
-            val_total = ((((((largeur * 2) * hauteur) / 1000000 * (170000 + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) * (1 + (tms / 100)) * val_remplissage_vitre) + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 0.95 * 1.1 * 1.08 * val_cintre / 2) * val_laque) + val_moustiquaire
+            val_total = (((((((largeur * 2) * hauteur) / 1000000 * (170000 + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) * (1 + (tms / 100)) * val_remplissage_vitre) + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 0.95 * 1.1 * 1.08 * val_cintre / 2) * val_laque) + val_moustiquaire) * 1.10
 
         if types == 'Coulissante 3VTX':
             if moustiquaire:
                 val_moustiquaire = (((largeur / 3 * hauteur) / 1000000 * 13500) * 1.2 * 1.08 * 1.4)
-            val_total = ((((largeur * hauteur) / 1000000 * (180000 * (1 + (tms / 100)) + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) + val_remplissage_vitre) + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 1.025 * 1.08 * val_cintre + val_moustiquaire) * val_laque
+            val_total = (((((largeur * hauteur) / 1000000 * (180000 * (1 + (tms / 100)) + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) + val_remplissage_vitre) + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 1.025 * 1.08 * val_cintre + val_moustiquaire) * val_laque) * 1.10
 
         if types == 'Coulissante 4VTX':
             if moustiquaire:
                 val_moustiquaire = (((largeur / 2 * hauteur) / 1000000 * 13500) * 1.2 * 1.08 * 1.4)
-            val_total = (((largeur * hauteur) / 1000000 * (180000 / 2 * (1 + (tms / 100)) * val_remplissage_vitre + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) * 2 + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 1.05 * 1.025 * 1.08 * val_cintre * val_laque) + val_moustiquaire
+            val_total = ((((largeur * hauteur) / 1000000 * (180000 / 2 * (1 + (tms / 100)) * val_remplissage_vitre + val_vitre * val_type_vitre + val_decoratif + val_autre_vitrage) * 2 + 29700 + val_poigne + val_serr + val_oscillo_battant + val_va_et_vient + val_butoir) * 1.05 * 1.025 * 1.08 * val_cintre * val_laque) + val_moustiquaire) * 1.10
 
         if types == 'Porte ouvrante 2VTX':
             if moustiquaire:

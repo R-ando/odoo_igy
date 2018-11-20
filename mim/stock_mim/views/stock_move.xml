@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Picking search view -->
+
+    <!-- Picking tree view -->
+
+    <!-- Picking form view -->
+    <record model="ir.ui.view" id="view_stock_picking_form">
+        <field name="name">stock.move.form.inherit</field>
+        <field name="model">stock.move</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_move_picking_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[@name='quants_grp']" position="before">
+                <group col="2">
+                    <group string="Contre-mesure">
+                        <field name="largeur"/>
+                        <field name="hauteur"/>
+                    </group>
+                    <group string="Ordre de fabrication">
+                        <field name="user_id" readonly="1"/>
+                        <field name="is_printable"/>
+                        <field name="in_mrp_valider_group" invisible="1"/>
+                        <field name="is_mo_created" attrs="{'readonly': [('in_mrp_valider_group','=',False)]}"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

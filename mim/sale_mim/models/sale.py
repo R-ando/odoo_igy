@@ -102,6 +102,16 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+#   Make_invoice
+    user_id = fields.Many2one(
+        string="Salesperson",
+        comodel_name="res.users",
+        readonly=True,
+        default=False)
+    # categ_ids = fields.Many2many(
+    #     string="Tags",
+    #     comodel_name="crm.case.categ")
+
 #   Basique
     entete = fields.Text(
         string="Sujet")
