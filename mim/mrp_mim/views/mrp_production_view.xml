@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<record id="base.mrp_set_draft" model="res.groups">
+            <field name="name">MRP-Bouton : Remettre à nouveau</field>
+       </record>
+       
+       <record id="base.mrp_calculer" model="res.groups">
+            <field name="name">MRP-Bouton : Calculer</field>
+       </record>
+       <record id="base.mrp_confirmer" model="res.groups">
+            <field name="name">MRP-Bouton : Confirmer la consommation</field>
+       </record>
+       <record id="base.mrp_annuler" model="res.groups">
+            <field name="name">MRP-Bouton : Annuler la production</field>
+       </record>
+       <record id="base.mrp_forcer" model="res.groups">
+            <field name="name">MRP-Bouton : Forcer la réservation</field>
+       </record>
+       <record id="base.mrp_fabriquer" model="res.groups">
+            <field name="name">MRP-Bouton : Fabriquer</field>
+       </record>
+       
+       <record id="base.mrp_valider" model="res.groups">
+            <field name="name">MRP-Bouton : Valider la fiche de débit</field>
+       </record>
+       <record id="base.mrp_verifier" model="res.groups">
+            <field name="name">MRP-Bouton : Mettre à fiche de débit vérifiée</field>
+       </record>
+
+    <record model="ir.ui.view" id="view_mrp_production_form_inherit">
+        <field name="name">mrp.production.form.inherit</field>
+        <field name="model">mrp.production</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+  
+            <xpath expr="//field[@name='bom_id']" position="replace">
+                <field name="bom_id" domain="[('product_id','=',product_id)]" context="{'default_product_id': product_id}" on_change="bom_id_change(bom_id)"/>
+            </xpath>
+
+            <xpath expr="//field[@name='state']" position="replace">
+            	<field name="state" widget="statusbar" statusbar_visible="confirmed,verified,validated,progress,done"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='bom_id']" position="after">
+            	<field name="description"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='user_id']" position="before">
+            	<field name="partner_id"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='consumed_less_than_planned']" position="before">
+                <button name="verification" string="Fiche vérifiée" type="object"/>
+            </xpath>
+
+            <xpath expr="/form/sheet/group" position="after">
+	     	    <group string="Données en entrée" col="2">
+	     	        <group>
+	     	            <field name="is_printable" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+	     	            <field name="largeur" readonly="True"/>
+						<field name="hauteur" readonly="True"/>
+						<field name="tms" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="style" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="vitre" attrs="{'readonly': [('state','not in',('confirmed'))]}" />
+						<field name="remplissage_vitre" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+	     	        </group>
+	     	        <group>
+	     	        	<field name="partner_name"/>
+						<field name="intermediaire" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="type_intermediaire" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="moustiquaire" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="division" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="nb_division" attrs="{'readonly': [('state','not in',('confirmed'))]}" />
+						<!--field name="batis_id" attrs="{'readonly': [('state','not in',('confirmed'))]}" /-->
+						<field name="longueur_barre" attrs="{'readonly': [('state','not in',('confirmed'))]}"/>
+						<field name="is_calculated" invisible="1"/>
+					</group>
+				</group>
+			</xpath>
+            <xpath expr="/form/sheet/notebook" position="replace">
+                <notebook modifiers="{}">
+                    <page string="Consumed Materials">
+                            <field name="move_raw_ids" context="{'final_lots': show_final_lots, 'form_view_ref': 'mrp.view_stock_move_lots', 'default_location_id': location_src_id, 'default_location_dest_id': production_location_id, 'default_state': 'confirmed', 'default_raw_material_production_id': id}" attrs="{'readonly': [('is_locked', '=', True)]}">
+                                <tree delete="0" default_order="is_done,sequence" decoration-muted="is_done" decoration-warning="quantity_done&gt;product_uom_qty" decoration-success="quantity_done==product_uom_qty" decoration-danger="reserved_availability &lt; product_uom_qty">
+                                    <field name="product_id" required="1"/>
+                                    <field name="name" invisible="1"/>
+                                    <field name="unit_factor" invisible="1"/>
+                                    <field name="has_tracking" invisible="1"/>
+                                    <field name="needs_lots" readonly="1" groups="stock.group_production_lot"/>
+                                    <field name="is_done" invisible="1"/>
+                                    <field name="sequence" invisible="1"/>
+                                    <field name="location_id" invisible="1"/>
+                                    <field name="location_dest_id" domain="[('id', 'child_of', parent.location_dest_id)]" invisible="1"/>
+                                    <field name="state" invisible="1" force_save="1"/>
+                                    <field name="product_uom_qty" string="To Consume"/>
+                                    <field name="reserved_availability" attrs="{'invisible': [('is_done', '=', True)]}" string="Reserved"/>
+                                    <field name="quantity_done" string="Consumed"/>
+                                    <field name="product_uom" groups="product.group_uom"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Produits finis">
+                            <group>
+                                <group string="Products to Produce">
+                                    <!-- <field name="move_created_ids" nolabel="1" options="{'reload_on_button': true}">
+                                        <tree string="Products to Finish">
+                                            <field name="product_id"/>
+                                            <field name="product_uom_qty"/>
+                                            <field name="product_uom"  string="Unit of Measure" groups="product.group_uom"/>
+                                            <field name="state" invisible="1"/>
+                                        </tree>
+                                    </field> -->
+                                </group>
+                                <group string="Finished Products">
+                                    <field name="finished_move_line_ids" context="{'form_view_ref': 'mrp.view_finisehd_move_line'}" attrs="{'readonly': [('is_locked', '=', True)], 'invisible': [('finished_move_line_ids', '=', [])]}">
+                                        <tree default_order="done_move" editable="bottom" create="0" delete="0" decoration-muted="state in ('done', 'cancel')">
+                                            <field name="product_id" readonly="1"/>
+                                            <field name="lot_id" groups="stock.group_production_lot" domain="[('product_id', '=', product_id)]" context="{'default_product_id': product_id}" attrs="{'invisible': [('lots_visible', '=', False)]}"/>
+                                            <field name="qty_done"/>
+                                            <field name="lots_visible" invisible="1"/>
+                                            <field name="done_move" invisible="1"/>
+                                            <field name="state" invisible="1"/>
+                                            <field name="product_uom_id" groups="product.group_uom"/>
+                                        </tree>
+                                    </field>
+                                    <p attrs="{'invisible': [('finished_move_line_ids', '!=', [])]}">
+                                        Use the Produce button or process the work orders to create some finished products. 
+                                    </p>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Miscellaneous">
+                            <group>
+                                <group groups="stock.group_stock_multi_locations">
+                                    <field name="picking_type_id" domain="[('code', '=', 'mrp_operation')]" attrs="{'readonly': [('has_moves', '=', True)]}"/>
+                                    <field name="location_src_id" domain="[('usage','=','internal')]" attrs="{'readonly': [('has_moves', '=', True)]}"/>
+                                    <field name="location_dest_id" domain="[('usage','=','internal')]" attrs="{'readonly': [('has_moves', '=', True)]}"/>
+                                </group>
+                                <group>
+                                    <field name="availability" groups="base.group_no_one"/>
+                                </group>
+                            </group>
+                        </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
