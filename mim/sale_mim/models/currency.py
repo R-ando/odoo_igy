@@ -10,8 +10,3 @@ class Currency(models.Model):
     currency_name = fields.Char(
         string="Nom complet devise",
         size=20)
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a

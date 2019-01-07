@@ -20,10 +20,7 @@ class MrpBomLine(models.Model):
     component_exist = fields.Boolean(
         string="Composant existant",
         default=False)
-<<<<<<< HEAD
-=======
     # compoenent_id =>fiels.integer dans source
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     component_id = fields.Many2one(
         string="identifiant composant",
         comodel_name="mrp.component")
@@ -147,8 +144,6 @@ class MrpComponent(models.Model):
         record.line_id.component_exist = True
         record.line_id.component_id = record
         return record
-<<<<<<< HEAD
-=======
 
 
 # class MrpProductionProductLine(models.Model):
@@ -163,4 +158,3 @@ class MrpComponent(models.Model):
 #         comodel_name='mrp.bom.line',
 #         ondelete='cascade',    
 #     )
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a

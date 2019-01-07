@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-<<<<<<< HEAD
-
-from odoo import models, fields, api, exceptions
-=======
 import logging
 
 from math import ceil as ceil
@@ -15,17 +11,12 @@ from odoo import exceptions
 
 _logger = logging.getLogger(__name__)
 
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     largeur = fields.Float(
-<<<<<<< HEAD
-        string="Largeur")
-=======
         string="Largeur")   
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     hauteur = fields.Float(
         string="Hauteur")
     nbr_barre = fields.Float(
@@ -33,11 +24,7 @@ class MrpProduction(models.Model):
     # product_lines1 = fields.One2many(
     #     string="Articles",
     #     comodel_name="mrp.production.product.component.line",
-<<<<<<< HEAD
-    #     inverse_name="production_iimport ipdb; ipdb.set_trace()d")
-=======
     #     inverse_name="production_id")
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     # product_lines2 = fields.One2many(
     #     string="Accessoires",
     #     comodel_name="mrp.production.product.accessory.line",
@@ -114,13 +101,8 @@ class MrpProduction(models.Model):
         selection=[
             ('fixe', 'Fixe'),
             ('coulissante', 'Coulissante')])
-<<<<<<< HEAD
-
-    tms = fields.Float(string="TMS")
-=======
     tms = fields.Float(
         string="TMS")
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     intermediaire = fields.Selection(
         string=u"Intermédiaire",
         selection=[
@@ -181,59 +163,6 @@ class MrpProduction(models.Model):
         string="Nom du client",
         compute='_get_partner_name')
 
-<<<<<<< HEAD
-    @api.multi
-    def change_etat_to_fiche_verifie(self):
-        self.write({
-            'state' : 'Fiche vérifiée',
-            })
-        return True
-
-    @api.depends('partner_id')
-    def _get_partner_name(self):
-        for production in self:
-            production.partner_name = production.partner_id.name
-
-    #CPR
-    # def _get_default_basis(self):
-    # batis_ids = self.env['mim.article'].search([('name', '=', 'T 60 K B')])
-    # if not batis_ids:
-    #     raise osv.except_osv('Erreur!', u"Le bâtis T 60 K B par défaut n\'est pas défini dans mim.article!")
-    # return batis_ids[0]
-
-    # def _get_partner_name(self):
-    #     res = {}
-    #     if context is None:
-    #         context = {}
-    #     for production in self.browse():
-    #         res[production.id] = production.partner_id.name
-    #     return res
-
-    # def round_float(self, qty):
-    #     s = str(qty)
-    #     t = s.split('.')
-    #     dec = 0
-    #     if int(t[1])>0:
-    #         dec = 1
-    #     res = int(t[0]) + dec
-    #     return res
-
-    # def get_nbr_barres(self,qty_mm):
-    #     len_barre = self.browse()[0].longueur_barre
-    #     #len_barre est la longueur d'une barre en mm par unité
-    #     qty_barres = qty_mm/len_barre
-    #     return self.round_float(qty_barres)
-
-    # def set_draft(self):
-    # req = """UPDATE wkf_workitem w
-    #     SET act_id = (SELECT a.id FROM wkf_activity a WHERE a.wkf_id=(SELECT wkf.id FROM wkf WHERE wkf.name='mrp.production.basic') AND a.name='draft')
-    #     WHERE w.inst_id = (SELECT i.id FROM wkf_instance i WHERE i.res_id={0} AND i.res_type='mrp.production')""".format(ids[0])
-    #     cr.execute(req)
-    #     self.write({'state': 'draft'})
-    #     return True
-
-
-=======
 
     # <work_flow>
     @api.multi
@@ -273,4 +202,3 @@ class MrpProduction(models.Model):
         len_barre = self.longueur_barre
         qty_barres = qty_mm/len_barre
         return ceil(qty_barres)
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a

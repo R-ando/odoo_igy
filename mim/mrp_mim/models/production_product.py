@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-<<<<<<< HEAD
-from odoo import models, fields
-=======
 from odoo import models, fields, api
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
 
 
 class MrpProductionProductLine(models.Model):
@@ -17,17 +13,11 @@ class MrpProductionProductLine(models.Model):
         string="Bom Line parent",
         comodel_name="mrp.bom.line")
 
-<<<<<<< HEAD
-    def product_id_change(self, product_id):
-        if product_id:
-            product = self.env['product.product'].product_id
-=======
     @api.multi
     def product_id_change(self, product_id):
         if product_id:
             # retourne un objet; browse(product_id).id ny taloha
             product = self.env['product.product'].browse(product_id)
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
             product_id_vals = {
                 'product_uom': product.uom_id.id,
                 'name': product.name
@@ -52,13 +42,9 @@ class MrpProductionProductComponentLine(models.Model):
         string="Longueur total")
     production_id = fields.Many2one(
         string="Production Order",
-<<<<<<< HEAD
-        comodel_name="mrp.production")
-=======
         comodel_name="mrp.production",
         ondelete='cascade',
         )
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
 
 
 class MrpProductionProductAccessoryLine(models.Model):
@@ -74,10 +60,6 @@ class MrpProductionProductAccessoryLine(models.Model):
         string="Quantité total")
     production_id = fields.Many2one(
         string="Production Order",
-<<<<<<< HEAD
-        comodel_name="mrp.production")
-=======
         comodel_name="mrp.production",
         ondelete='cascade',
         )
->>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
