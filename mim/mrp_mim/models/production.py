@@ -164,6 +164,11 @@ class MrpProduction(models.Model):
         compute='_get_partner_name')
 
 
+    @api.depends('partner_id')
+    def _get_partner_name(self):
+        for production in self:
+            production.partner_name = production.partner_id.name
+
     # <work_flow>
     @api.multi
     def verification(self):

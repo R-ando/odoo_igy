@@ -1,5 +1,15 @@
 mim/mrp_mim/models/__pycache__/bom.cpython-36.pyc
 mim/mrp_mim/models/__pycache__/production.cpython-36.pyc
 mim/refresh_fields/models/__pycache__/migration.cpython-36.pyc
+<<<<<<< HEAD
 mim/sale_mim/models/__pycache__/currency.cpython-36.pyc
 mim/stock_mim/models/__pycache__/stock_move.cpython-36.pyc
+=======
+mim/sale_mim/models/__pycache__/__init__.cpython-36.pyc
+mim/sale_mim/models/__pycache__/product.cpython-36.pyc
+mim/sale_mim/models/__pycache__/sale.cpython-36.pyc
+mim/sale_mim/wizard/__pycache__/__init__.cpython-36.pyc
+mim/sale_mim/wizard/__pycache__/sale_order_line_advance.cpython-36.pyc
+mim/stock_mim/models/__pycache__/stock_move.cpython-36.pyc
+mim/stock_mim/models/__pycache__/stock_picking.cpython-36.pyc
+>>>>>>> 05961d2c59059b25d0172379f7294170973f1034
