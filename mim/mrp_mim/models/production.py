@@ -1,12 +1,31 @@
 # -*- coding: utf-8 -*-
+<<<<<<< HEAD
 
 from odoo import models, fields, api, exceptions
+=======
+import logging
+
+from math import ceil as ceil
+
+from odoo import models
+from odoo import fields
+from odoo import api
+from odoo import exceptions
+
+
+_logger = logging.getLogger(__name__)
+
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     largeur = fields.Float(
+<<<<<<< HEAD
         string="Largeur")
+=======
+        string="Largeur")   
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     hauteur = fields.Float(
         string="Hauteur")
     nbr_barre = fields.Float(
@@ -14,7 +33,11 @@ class MrpProduction(models.Model):
     # product_lines1 = fields.One2many(
     #     string="Articles",
     #     comodel_name="mrp.production.product.component.line",
+<<<<<<< HEAD
     #     inverse_name="production_iimport ipdb; ipdb.set_trace()d")
+=======
+    #     inverse_name="production_id")
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     # product_lines2 = fields.One2many(
     #     string="Accessoires",
     #     comodel_name="mrp.production.product.accessory.line",
@@ -91,8 +114,13 @@ class MrpProduction(models.Model):
         selection=[
             ('fixe', 'Fixe'),
             ('coulissante', 'Coulissante')])
+<<<<<<< HEAD
 
     tms = fields.Float(string="TMS")
+=======
+    tms = fields.Float(
+        string="TMS")
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     intermediaire = fields.Selection(
         string=u"Intermédiaire",
         selection=[
@@ -153,6 +181,7 @@ class MrpProduction(models.Model):
         string="Nom du client",
         compute='_get_partner_name')
 
+<<<<<<< HEAD
     @api.multi
     def change_etat_to_fiche_verifie(self):
         self.write({
@@ -204,3 +233,44 @@ class MrpProduction(models.Model):
     #     return True
 
 
+=======
+
+    # <work_flow>
+    @api.multi
+    def verification(self):
+        """mrp_fiche_de_debit
+            mrp.py
+            class mrp_production
+            action_verified"""
+
+        move_obj = self.env['stock.move']
+        
+        for prod in self:
+            state_move = move_obj.search([('production_id', '=', prod.id)]).state
+            if state_move != 'contre_mesure':
+                raise exceptions.ValidationError(
+                    u"Le mouvement lié à cet ordre fabrication n'est pas encore dans l'état contre-mesure"
+                )
+            if prod.hauteur == 0.0 or prod.largeur == 0.0:
+                raise exceptions.ValidationError(
+                    u"Les contre-mesures ne doivent pas être vides. Merci de faire remplir par le responsable dans le bon de livraison lié"
+                )
+
+        self.write({
+            'state':'verified',
+            })
+
+    @api.multi
+    def action_validation(self):
+        self.write({
+            'state':'validated'
+        })
+
+    # </work_flow>
+
+    @api.multi
+    def _get_nbr_barres(self, qty_mm):
+        len_barre = self.longueur_barre
+        qty_barres = qty_mm/len_barre
+        return ceil(qty_barres)
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a

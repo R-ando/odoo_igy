@@ -25,7 +25,10 @@
         </field>
     </record>
 
+<<<<<<< HEAD
     
+=======
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     <!-- Picking form view -->
     <record model="ir.ui.view" id="view_stock_picking_form">
         <field name="name">stock.picking.form.inherit</field>

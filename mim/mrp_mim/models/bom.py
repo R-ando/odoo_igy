@@ -20,6 +20,10 @@ class MrpBomLine(models.Model):
     component_exist = fields.Boolean(
         string="Composant existant",
         default=False)
+<<<<<<< HEAD
+=======
+    # compoenent_id =>fiels.integer dans source
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     component_id = fields.Many2one(
         string="identifiant composant",
         comodel_name="mrp.component")
@@ -143,3 +147,20 @@ class MrpComponent(models.Model):
         record.line_id.component_exist = True
         record.line_id.component_id = record
         return record
+<<<<<<< HEAD
+=======
+
+
+# class MrpProductionProductLine(models.Model):
+#     _inherit = 'mrp.production.product.line'
+ 
+#     is_accessory = fields.Boolean(
+#         string=u'Est un accesoire',
+#     )
+    
+#     line_id = fields.Many2many(
+#         string=u'line_id',
+#         comodel_name='mrp.bom.line',
+#         ondelete='cascade',    
+#     )
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a

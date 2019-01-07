@@ -61,11 +61,14 @@ class StockMove(models.Model):
     # Fonction changeant les etats
     @api.multi
     def change_state_to_contre_mesure(self):
+<<<<<<< HEAD
 
         # if not self.env['stock.move']:
         #     raise exceptions.ValidationError("Ce n'est pas le bon modèle")
         _logger.info("\n*****self2 = %s*****\n" % self)
 
+=======
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
         self.write({
             'state' : 'contre_mesure',
             'largeur' : self.largeur,
@@ -150,15 +153,23 @@ class ChoiceConfiguration(models.Model):
         default=_get_stock_move_id
     )
 
+<<<<<<< HEAD
     
 
+=======
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
     @api.multi
     def update_stock_move(self):
         stock_move_id = self.stock_move_id
         stock_move = self.env['stock.move'].browse(stock_move_id)
         self.env.cr.execute('''SELECT mrp_bom.id FROM mrp_bom INNER JOIN product_product 
+<<<<<<< HEAD
             ON mrp_bom.product_id = product_product.id WHERE product_product.id={0}'''
             .format(stock_move.product_id.id))
+=======
+           ON mrp_bom.product_id = product_product.id WHERE product_product.id={0}'''
+           .format(stock_move.product_id.id))
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
         res_req = self.env.cr.dictfetchone()
         
         largeur = stock_move.largeur
@@ -169,15 +180,29 @@ class ChoiceConfiguration(models.Model):
                 bom_id = res_req['id']
             else:
                 bom_id = False
+<<<<<<< HEAD
             if stock_move and stock_move.sale_line_id:
                 sale_line_id = stock_move.sale_line_id
             else:
                 raise osv.except_osv(('Erreur'), (u"Ce movement de stock n'\est lié à aucune ligne de bons de commande (sale.order.line)"))            
+=======
+
+            #Recupération sale_line (ligne de commande)
+            if stock_move and stock_move.sale_line_id:
+                sale_line_id = stock_move.sale_line_id
+            else:
+                raise exceptions.ValidationError("Ce mouvement n'est lié à aucun bon de commande")
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
             vals = {
                 'origin': stock_move.origin,
                 'product_id': stock_move.product_id.id,
                 'product_qty': stock_move.product_qty,
                 'product_uom_id': stock_move.product_uom.id,
+<<<<<<< HEAD
+=======
+                # 'product_uos_qty': stock_move.product_uos and stock_move.product_uos_qty or False,
+                # 'product_uos': stock_move.product_uos and stock_move.product_uos.id or False,
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
                 'location_src_id': stock_move.location_id.id,
                 'location_dest_id': stock_move.location_dest_id.id,
                 'bom_id': bom_id,
@@ -216,15 +241,26 @@ class ChoiceConfiguration(models.Model):
                 'intermediaire':sale_line_id.intermediaire,
             }
             production_obj = self.env['mrp.production']
+<<<<<<< HEAD
             stock_move_obj = self.env['stock.move']
+=======
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
             id_mo = production_obj.create(vals)
             val = {
                 'id_mo' : id_mo,
                 'user_id' : self.env.uid,
                 'is_mo_created' : True,
             }
+<<<<<<< HEAD
             stock_move_obj.write([stock_move_id], val)
         else:
             raise exceptions.ValidationError('Veuillez saisir les contre-mesures avant de valider.')
         
         return True
+=======
+            stock_move.write([stock_move_id], val)
+        else:
+            raise exceptions.ValidationError('Veuillez saisir contre mesure')
+
+        return True
+>>>>>>> 5bec217211feeae309b49c6f249c9e8946e85c8a
