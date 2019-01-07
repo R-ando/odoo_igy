@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <!-- Picking search view -->
 
     <!-- Picking tree view -->
@@ -38,7 +38,7 @@
         </field>
     </record>
 
-    
+
     <record model="ir.ui.view" id="view_stock_picking_form">
         <field name="name">stock.move.form.inherit</field>
         <field name="model">stock.move</field>
@@ -47,18 +47,21 @@
         <field name="arch" type="xml">
 
             <!-- Bouton sur au dessus du state-->
-            <xpath expr="//field[@name='state']" position="after">
-                <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight"  />
+            <xpath expr="/form/header" position="after">
+                <div>
+                    <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight"  style="margin-right:5px"/>
 
-                <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" />
+                    <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" style="margin-right:5px"/>
 
-                <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" />
+                    <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" style="margin-right:5px"/>
 
-                <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" />
+                    <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" style="margin-right:5px"/>
 
-                <button type="object" name="act_view_mo" string="Voir l'ordre de fabrication" class="oe_highlight" />
+                    <button type="object" name="act_view_mo" string="Voir l'ordre de fabrication" class="oe_highlight" style="margin-right:5px"/>
 
-                <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight"  />
+                    <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight" style="margin-right:5px" />
+                </div>
+
             </xpath>
 
             <!-- Groupe composant mo & contre_mesure -->
