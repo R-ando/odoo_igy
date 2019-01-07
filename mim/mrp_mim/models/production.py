@@ -11,19 +11,12 @@ from odoo import exceptions
 
 _logger = logging.getLogger(__name__)
 
+
 class MrpProduction(models.Model):
-
-    @api.multi
-    def _get_partner_name(self):
-        res = {}
-        for production in self.browse():
-            res[production.id] = production.partner_id.name
-        return res
-
     _inherit = 'mrp.production'
 
     largeur = fields.Float(
-        string="Largeur")
+        string="Largeur")   
     hauteur = fields.Float(
         string="Hauteur")
     nbr_barre = fields.Float(

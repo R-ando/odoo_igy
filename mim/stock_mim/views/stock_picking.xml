@@ -25,7 +25,6 @@
         </field>
     </record>
 
-    
     <!-- Picking form view -->
     <record model="ir.ui.view" id="view_stock_picking_form">
         <field name="name">stock.picking.form.inherit</field>

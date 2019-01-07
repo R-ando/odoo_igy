@@ -52,7 +52,7 @@ class MigrateFields(models.TransientModel):
         for model in self.model_ids:
             model_name = model.model
             groups = self._custom_setup_fields(model_name)
-            records = self.env[model_name].search(limit=300)
+            records = self.env[model_name].search([('order_id', '>', 1)], limit=300)
             # key = function_name
             # vals = field name
             for key, vals in groups.items():
