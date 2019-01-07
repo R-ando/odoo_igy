@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="mrp_production_product_component_tree_view" model="ir.ui.view">
+        <field name="name">mrp.production.product.component.line.tree</field>
+        <field name="model">mrp.production.product.component.line</field>
+        <field name="arch" type="xml">
+            <tree string="Articles" editable="bottom">
+                <field name="ref"/>
+                <field name="name"/>
+                <field name="product_qty"/>
+                <field name="product_qty_total"/>
+                <field name="len_unit"/>
+                <field name="len_total"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="mrp_production_product_accessory_tree_view" model="ir.ui.view">
+        <field name="name">mrp.production.product.accessory.line.tree</field>
+        <field name="model">mrp.production.product.accessory.line</field>
+        <field name="arch" type="xml">
+            <tree string="Articles" editable="bottom">
+                <field name="ref"/>
+                <field name="name"/>
+                <field name="product_qty"/>
+                <field name="product_qty_total"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

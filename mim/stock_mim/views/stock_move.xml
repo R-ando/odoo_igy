@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Picking search view -->
+
+    <!-- Picking tree view -->
+
+    <!-- Picking form view -->
+
+    <record model="ir.ui.view" id="view_picking_form">
+        <field name="name">picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='move_lines']/tree" position="attributes">
+                <attribute name="editable" />
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Vue confirmation config -->
+    <record model="ir.ui.view" id="view_choice_config_form">
+        <field name="name">choice.configuration.form</field>
+        <field name="model">choice.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Veuillez cocher la case si la fiche de debit est standard">
+                <group col="1">
+                    <field name="is_printable" />
+                </group>
+                <footer>
+                    <button class="oe_highlight" type="object" name="update_stock_move" string="Confirmer et créer l'ordre de fabrication" />
+                    or
+                    <button class="oe_link" special="cancel" string="Annuler" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    
+    <record model="ir.ui.view" id="view_stock_picking_form">
+        <field name="name">stock.move.form.inherit</field>
+        <field name="model">stock.move</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_move_picking_form" />
+        <field name="arch" type="xml">
+
+            <!-- Bouton sur au dessus du state-->
+            <xpath expr="/form/header" position="after">
+                <div>
+                    <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight" style="margin-right:5px" />
+
+                    <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" style="margin-right:5px" />
+
+                    <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" style="margin-right:5px" />
+
+                    <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" style="margin-right:5px"  />
+
+                    <button type="object" name="act_view_mo" string="Voir l'ordre de fabrication" class="oe_highlight" style="margin-right:5px" />
+
+                    <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight" style="margin-right:5px"  />
+                </div>
+            </xpath>
+
+            <!-- Groupe composant mo & contre_mesure -->
+            <xpath expr="//group[@name='quants_grp']" position="before">
+                <group col="2">
+
+
+                    <group string="Contre-mesure">
+                        <field name="largeur"/>
+                        <field name="hauteur"/>
+                    </group>
+                    <group string="Ordre de fabrication">
+                        <field name="user_id" readonly="1"/>
+                        <field name="is_printable"/>
+                        <field name="in_mrp_valider_group" invisible="1"/>
+                        <field name="is_mo_created" attrs="{'readonly': [('in_mrp_valider_group','=',False)]}"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

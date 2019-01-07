@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_stock_quantity_history_form_inherit">
+        <field name="name">stock.quantity.history.form.inherit</field>
+        <field name="model">stock.quantity.history</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock_account.view_stock_quantity_history" />
+        <field name="arch" type="xml">
+            <xpath expr="/form/group/group" position="after">
+                 <div>
+
+                 </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_mrp_wizard">
+        <field name="name">Wizard label</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.quantity.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_stock_quantity_history_form_inherit" />
+    </record>
+
+    <menuitem
+        id="menu_mrp_wizard_cat"
+        name="MRP Vaovao"
+        parent="mrp.menu_mrp_root" />
+
+    <menuitem
+        id="menu_mrp_wizard_s"
+        name="MRP"
+        parent="menu_mrp_wizard_cat"
+        action="action_mrp_wizard"/>
+
+
+</odoo>
