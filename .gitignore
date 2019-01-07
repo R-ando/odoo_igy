@@ -1,10 +1,2 @@
-mim/mrp_mim/models/__pycache__/bom.cpython-36.pyc
-mim/mrp_mim/models/__pycache__/production.cpython-36.pyc
-mim/refresh_fields/models/__pycache__/migration.cpython-36.pyc
-mim/sale_mim/models/__pycache__/__init__.cpython-36.pyc
-mim/sale_mim/models/__pycache__/product.cpython-36.pyc
-mim/sale_mim/models/__pycache__/sale.cpython-36.pyc
-mim/sale_mim/wizard/__pycache__/__init__.cpython-36.pyc
-mim/sale_mim/wizard/__pycache__/sale_order_line_advance.cpython-36.pyc
-mim/stock_mim/models/__pycache__/stock_move.cpython-36.pyc
-mim/stock_mim/models/__pycache__/stock_picking.cpython-36.pyc
+*.pyc
+__pycache__/
