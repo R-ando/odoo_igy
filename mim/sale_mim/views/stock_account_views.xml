@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+    <record model="ir.ui.view" id="raw_material_tree_view">
+        <field name="name">raw.materials.tree.view</field>
+        <field name="model">product.template</field>
+        <field name="priority" eval="16"/>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="virtual_available"/>
+                <field name="uom_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="raw_material_action_view">
+            <field name="name">Matières premières</field>
+            <field name="res_model">product.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="raw_material_tree_view"/>
+            <field name="domain">[('is_bom', '=', True)]</field>
+        </record>
+
+    <menuitem
+        id="menu_root_sale_conso"
+        name="Consommation"
+        parent="sale.sale_menu_root" />
+
+    <menuitem
+        id="menu_sale_conso"
+        name="Matières premières"
+        parent="menu_root_sale_conso"
+        action="raw_material_action_view"/>
+
+    </data>  
+</odoo>

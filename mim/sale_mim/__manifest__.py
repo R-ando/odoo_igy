@@ -23,6 +23,7 @@
         'views/sale_view.xml',
         'views/product_view.xml',
         'wizard/sale_order_line_advance_view.xml',
+        'views/stock_account_views.xml',
     ],
 
     'icon': 'sale_mim/static/src/img/icon.png',
