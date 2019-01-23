@@ -55,6 +55,10 @@
                 <button name="verification" string="Fiche vérifiée" type="object"/>
             </xpath>
 
+            <xpath expr="//field[@name='routing_id']" position="after">
+                <field name="date_planned"/>
+            </xpath>
+
             <xpath expr="/form/sheet/group" position="after">
 	     	    <group string="Données en entrée" col="2">
 	     	        <group>
@@ -131,7 +135,40 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Miscellaneous">
+                        <page string="Articles prévus">
+                            <button name="action_compute" type="object" string="Calculer les données"/>
+                            <field name="product_lines">
+                                <tree>
+                                    <field name="name" />
+                                    <field name="product_qty" />
+                                    <field name="product_uom_id" />
+                                    <field name="is_accessory" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Articles et accessoires">
+                            <label for="product_lines1" />
+                            <field name="product_lines1">
+                                <tree>
+                                    <field name="ref" />
+                                    <field name="name" />
+                                    <field name="product_qty" />
+                                    <field name="product_qty_total" />
+                                    <field name="len_unit" />
+                                    <field name="len_total" />
+                                </tree>
+                            </field>
+                            <label for="product_lines2" />
+                            <field name="product_lines2">
+                                <tree>
+                                    <field name="ref" />
+                                    <field name="name" />
+                                    <field name="product_qty" />
+                                    <field name="product_qty_total" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Divers">
                             <group>
                                 <group groups="stock.group_stock_multi_locations">
                                     <field name="picking_type_id" domain="[('code', '=', 'mrp_operation')]" attrs="{'readonly': [('has_moves', '=', True)]}"/>

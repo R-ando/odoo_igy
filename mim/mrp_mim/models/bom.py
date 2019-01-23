@@ -1,11 +1,87 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
-
+from odoo import models, fields, api, exceptions
+from odoo.tools import float_round
 
 # Classe nomenclature des articles
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
+
+    #Surcharge de la fonction explode
+    @api.multi
+    def bom_explode(self, product, quantity, picking_type=False):
+        """
+            Explodes the BoM and creates two lists with all the information you need: bom_done and line_done
+            Quantity describes the number of times you need the BoM: so the quantity divided by the number created by the BoM
+            and converted into its UoM
+        """
+        from collections import defaultdict
+
+        graph = defaultdict(list)
+        V = set()
+
+        def check_cycle(v, visited, recStack, graph):
+            visited[v] = True
+            recStack[v] = True
+            for neighbour in graph[v]:
+                if visited[neighbour] == False:
+                    if check_cycle(neighbour, visited, recStack, graph) == True:
+                        return True
+                elif recStack[neighbour] == True:
+                    return True
+            recStack[v] = False
+            return False
+
+        boms_done = [(self, {'qty': quantity, 'product': product, 'original_qty': quantity, 'parent_line': False})]
+        lines_done = []
+        V |= set([product.product_tmpl_id.id])
+
+        bom_lines = [(bom_line, product, quantity, False) for bom_line in self.bom_line_ids]
+        for bom_line in self.bom_line_ids:
+            V |= set([bom_line.product_id.product_tmpl_id.id])
+            graph[product.product_tmpl_id.id].append(bom_line.product_id.product_tmpl_id.id)
+        while bom_lines:
+            current_line, current_product, current_qty, parent_line = bom_lines[0]
+            bom_lines = bom_lines[1:]
+
+            if current_line._skip_bom_line(current_product):
+                continue
+
+            line_quantity = current_qty * current_line.product_qty
+            bom = self._bom_find(product=current_line.product_id, picking_type=picking_type or self.picking_type_id, company_id=self.company_id.id)
+            if bom.type == 'phantom':
+                converted_line_quantity = current_line.product_uom_id._compute_quantity(line_quantity / bom.product_qty, bom.product_uom_id)
+                bom_lines = [(line, current_line.product_id, converted_line_quantity, current_line) for line in bom.bom_line_ids] + bom_lines
+                for bom_line in bom.bom_line_ids:
+                    graph[current_line.product_id.product_tmpl_id.id].append(bom_line.product_id.product_tmpl_id.id)
+                    if bom_line.product_id.product_tmpl_id.id in V and check_cycle(bom_line.product_id.product_tmpl_id.id, {key: False for  key in V}, {key: False for  key in V}, graph):
+                        raise exceptions.UserError(('Recursion error!  A product with a Bill of Material should not have itself in its BoM or child BoMs!'))
+                    V |= set([bom_line.product_id.product_tmpl_id.id])
+                boms_done.append((bom, {
+                    'qty': converted_line_quantity, 
+                    'product': current_product, 
+                    'original_qty': quantity, 
+                    'parent_line': current_line,
+                }))
+            else:
+                # We round up here because the user expects that if he has to consume a little more, the whole UOM unit
+                # should be consumed.
+                rounding = current_line.product_uom_id.rounding
+                line_quantity = float_round(line_quantity, precision_rounding=rounding, rounding_method='UP')
+                lines_done.append((current_line, 
+                    {'qty': line_quantity, 
+                    'product': current_product, 
+                    'original_qty': quantity, 
+                    'parent_line': parent_line,
+
+                    #Ajout de paramètres supplémentaires
+                    'line_id' : current_line.id,
+                    'is_accessory' : current_line.is_accessory,
+                    'ref' : current_line.ref,
+                    'sequence': current_line.sequence,
+                    }))
+
+        return {'boms_done' : boms_done, 'lines_done': lines_done}  
 
 
 # Classe ligne des composants
@@ -20,7 +96,6 @@ class MrpBomLine(models.Model):
     component_exist = fields.Boolean(
         string="Composant existant",
         default=False)
-    # compoenent_id =>fiels.integer dans source
     component_id = fields.Many2one(
         string="identifiant composant",
         comodel_name="mrp.component")
@@ -28,6 +103,7 @@ class MrpBomLine(models.Model):
     _sql_constraints = [('reference_unique', 'unique(ref)',
                          'Il y a des doublons dans la colonne référence!')]
 
+    #Fonction manokatr popup any am sous-composant n nomenclature
     @api.multi
     def open_view_component(self):
         product_id = self.product_id
@@ -37,7 +113,7 @@ class MrpBomLine(models.Model):
 #       Si la configuration du composant n'existe pas encore, elle sera créée
         if not component_exist:
             return {
-                'name': _('Configuration des composants'),
+                'name': ('Configuration des composants'),
                 'res_model': 'mrp.component',
                 'type': 'ir.actions.act_window',
                 'view_id': view_ref.id,
@@ -55,7 +131,7 @@ class MrpBomLine(models.Model):
         else:
             component_id = self.component_id
             return {
-                'name': _('Configuration des composants'),
+                'name': ('Configuration des composants'),
                 'res_model': 'mrp.component',
                 'res_id': component_id.id,
                 'type': 'ir.actions.act_window',
@@ -91,7 +167,8 @@ class MrpSubComponent(models.Model):
         default="result=LU*QT")
     component_id = fields.Many2one(
         string="Sous-composants",
-        comodel_name="mrp.component")
+        comodel_name="mrp.component",
+        inverse_name="sub_component_ids")
 
 
 # Classe de configuration d'un composant : gestion des sous-composants
@@ -145,16 +222,28 @@ class MrpComponent(models.Model):
         record.line_id.component_id = record
         return record
 
+    #Permet de sauvegarder le contenu des sous-composants mrp.component
+    @api.multi
+    def save_component(self):
+        comp_obj = self.env['mrp.component']
+        bom_line_obj = self.env['mrp.bom.line']
+        comp = self.browse([0])
 
-# class MrpProductionProductLine(models.Model):
-#     _inherit = 'mrp.production.product.line'
- 
-#     is_accessory = fields.Boolean(
-#         string=u'Est un accesoire',
-#     )
-    
-#     line_id = fields.Many2many(
-#         string=u'line_id',
-#         comodel_name='mrp.bom.line',
-#         ondelete='cascade',    
-#     )
+        vals = {
+            'product_parent_id' : comp.parent_id.id,
+            'line_id' : comp.line_id.id,
+            'component_exist' : True,
+        }
+
+        comp_obj.write(vals)
+        #compenent_id : nécéssaire pour ouvrir act_window open_view_component()
+        #component_exist à True : pour dire que le sous composant a déjà été crée
+        val = {
+        'component_exist':True, 
+        'component_id':self.env.ids[0]
+        }
+
+        bom_line_obj.write([comp.line_id.id],val)
+
+        return {'type':'ir.actions.act_window_close'}
+

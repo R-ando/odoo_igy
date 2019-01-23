@@ -12,6 +12,22 @@ class MrpProductionProductLine(models.Model):
     line_id = fields.Many2one(
         string="Bom Line parent",
         comodel_name="mrp.bom.line")
+    production_id = fields.Many2one(
+        comodel_name='mrp.production',
+        string='Production Order',
+        )
+    product_qty = fields.Float(
+        string='Product Qty',
+        )
+    name = fields.Text(
+        string='Name',)
+    product_id = fields.Many2one(
+        'product.product',
+        string='Product',)
+    product_uom_id = fields.Many2one(
+        'product.uom',
+        string='Uom Product',
+        )
 
     @api.multi
     def product_id_change(self, product_id):
