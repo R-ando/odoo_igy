@@ -6,6 +6,10 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="model">sale.order</field>
         <field name="arch" type="xml">
+            <!--calcul la consommation pour les sale_order_lines-->
+            <xpath expr="//header" position="inside">
+                <button name="action_count" string="Calcuer les données" type="object"/>
+            </xpath>
             <!--Bon de commande-->
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="crm_lead_id" required="1"/>
@@ -23,6 +27,13 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="mesure" readonly="1"/>
+            </xpath>
+            <!--<make them readonly>-->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="replace">
+                <field name="price_unit" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="replace">
+                <field name="product_uom" readonly="1"/>
             </xpath>
         </field>
     </record>

@@ -22,7 +22,6 @@
     'data': [
         'views/mrp_bom_view.xml',
         'views/mrp_production_view.xml',
-        'views/mrp_raw_materials_count_view.xml',
         'views/mrp_view.xml',
     ],
 

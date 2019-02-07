@@ -5,4 +5,3 @@ from . import production
 from . import production_product
 from . import sale
 from . import stock
-from . import raw_materials_true

@@ -219,7 +219,7 @@ class ChoiceConfiguration(models.Model):
                 'user_id' : self.env.uid,
                 'is_mo_created' : True,
             }
-            stock_move.write([stock_move_id], val)
+            stock_move.write(val)
         else:
             raise exceptions.ValidationError('Veuillez saisir contre mesure')
 
