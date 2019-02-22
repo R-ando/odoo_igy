@@ -25,7 +25,43 @@
         </field>
     </record>
 
-    <!-- Picking form view -->
+    <!-- Picking root form view-->
+    <record model="ir.ui.view" id="view_picking_form_inherit">
+        <field name="name">stock.picking.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <button type="object" name="confirm_configs_mo" string="Créer les ordres de fabrication" class="oe_highlight" />
+<!--                 attrs="{'invisible': ['|',('mo_created', '=', True),('state','not in',('confirmed'))]}" -->
+                <button type="object" name="view_all_mo" string="Voir les ordres de fabrication" class="oe_highlight"/>
+                <!-- attrs="{'invisible': ['|',('mo_created','=',False),('state','not in',('confirmed','partially_available','assigned','done'))]}" -->
+            </xpath>
+            <!-- <field name="mo_created" /> -->
+        </field>
+    </record>
+
+    <!-- Vue confirmation configuration -->
+    <record model="ir.ui.view" id="view_date_planned_form">
+        <field name="name">date.planned.form</field>
+        <field name="model">mrp.configuration</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Entrer la date plannifiée de la livraison">
+                <group>
+                    <field name="date_planned" />
+                </group>
+                <footer>
+                    <button type="object" name="update_moves_data" string="Confirmer et créer les ordres de fabrication" class="oe_highlight" /> ou
+                    <button type="object" class="oe_link" special="cancel" string="Annuler" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    
+    <!-- Picking stock form view -->
     <record model="ir.ui.view" id="view_stock_picking_form">
         <field name="name">stock.picking.form.inherit</field>
         <field name="model">stock.picking</field>
