@@ -173,7 +173,7 @@ class MrpProduction(models.Model):
 
     # <work_flow>
     @api.multi
-    def verification(self):
+    def set_state_to_verified(self):
         """mrp_fiche_de_debit
             mrp.py
             class mrp_production
@@ -181,16 +181,15 @@ class MrpProduction(models.Model):
 
         move_obj = self.env['stock.move']
 
-        for prod in self:
-            state_move = move_obj.search([('production_id', '=', prod.id)]).state
-            if state_move != 'contre_mesure':
-                raise exceptions.ValidationError(
-                    u"Le mouvement lié à cet ordre fabrication n'est pas encore dans l'état contre-mesure"
-                )
-            if prod.hauteur == 0.0 or prod.largeur == 0.0:
-                raise exceptions.ValidationError(
-                    u"Les contre-mesures ne doivent pas être vides. Merci de faire remplir par le responsable dans le bon de livraison lié"
-                )
+        state_move = move_obj.search([('id_mo', '=', self.id)]).state
+        if state_move != 'contre_mesure':
+            raise exceptions.ValidationError(
+                u"Le mouvement lié à cet ordre fabrication n'est pas encore dans l'état contre-mesure"
+            )
+        if self.hauteur == 0.0 or self.largeur == 0.0:
+            raise exceptions.ValidationError(
+                u"Les contre-mesures ne doivent pas être vides. Merci de faire remplir par le responsable dans le bon de livraison lié"
+            )
 
         self.write({
             'state': 'verified',
