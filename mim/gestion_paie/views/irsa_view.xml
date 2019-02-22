@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+	<!-- Vue recherche -->
+	<record model="ir.ui.view" id="view_hr_payroll_irsa_search">
+	    <field name="name">hr.payroll.irsa.search</field>
+	    <field name="model">irsa</field>
+	    <field name="arch" type="xml">
+	        <search string="Recherche">
+	            <field name="num_emp" string="Matricule" />
+	            <field name="num_cin" string="CIN" />
+	            <group expand="0" string="Group By...">
+	                <filter string="filtre par mois" domain="[]" icon="terp-personal+" context="{'group_by': 'date_from'}"/>
+	                <filter string="nom" domain="[]" icon="terp-personal+" context="{'group_by': 'name_related'}" />
+	            </group>
+	        </search>
+	    </field>
+	</record>
+
+	<!-- Vue tree -->
+	<record model="ir.ui.view" id="view_hr_payroll_irsa_tree">
+	    <field name="name">hr.payroll.irsa.tree</field>
+	    <field name="model">irsa</field>
+	    <field name="arch" type="xml">
+	        <tree string="Ostie" edit="true" create="true">
+	            <field name="num_emp"/>
+                <field name="name_related"/>
+                <field name="num_cin"/>
+                <field name="basic"/>
+                <field name="brut"/>
+                <field name="irsa"/>
+                <field name="net"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+	        </tree>
+	    </field>
+	</record>
+
+	<!-- Actions -->
+	<record model="ir.actions.act_window" id="open_payroll_irsa">
+	    <field name="name">Etat IRSA</field>
+	    <field name="res_model">irsa</field>
+	    <field name="view_type">form</field>
+	    <field name="view_mode">tree,form</field>
+	    <field name="view_id" ref="view_hr_payroll_irsa_tree"/>
+	</record>
+
+	<!-- Menu -->
+	<menuitem id="payroll_irsa_menu" parent="payroll_etat_global_menu" action="open_payroll_irsa"/>
+</odoo>
