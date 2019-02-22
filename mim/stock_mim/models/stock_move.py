@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, exceptions
+from datetime import datetime
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -52,13 +54,40 @@ class StockMove(models.Model):
     name = fields.Text(
         string="Description")
 
-    #Surcharge write pour stock.move
+    # Surcharge write pour stock.move
     @api.multi
-    def write(self,vals):        
-        _logger.info("\n*****self1 = %s*****\n" % self)
-        return super(StockMove, self).write(vals)
+    def write(self,vals):
+        if vals.get('largeur') or vals.get('hauteur') or vals.get('is_printable'):
+            mo_vals = {
+                'largeur' : self.largeur,
+                'hauteur' : self.hauteur,
+                'is_printable' : self.is_printable,
+            }
+            mrp_prod_id = self.id_mo
+            mrp_prod_obj = self.env['mrp.production'].browse(mrp_prod_id)
+            mrp_prod_obj.write(mo_vals)
+
+        #Mise à jour de la date de production
+        pick_obj = self.env['stock.picking']
+        date_now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+        if vals.get('state'):
+            for move in self:
+                pick = pick_obj.browse(move.picking_id.id)
+                if all(x.state == 'assigned' for x in pick.move_lines) and not pick.production_date:
+                    pick.write({'production_date' : date_now })
+                if all(x.state == 'done' for x in pick.move_lines) and not pick.delivery_date:
+                    pick.write({'delivery_date' : date_now})
+
+        return super(StockMove,self).write(vals)
 
     # Fonction changeant les etats
+    @api.multi
+    def change_state_to_waiting(self):
+        self.write({
+            'state': 'confirmed',
+        })
+        return True
+
     @api.multi
     def change_state_to_contre_mesure(self):
         self.write({
@@ -125,14 +154,10 @@ class StockMove(models.Model):
 #Classe pour le choix de configuration
 class ChoiceConfiguration(models.Model):
     def _get_stock_move_id(self):
-        context = self.env.context
-        if context is None : context = {}
-        return context.get('stock_move_id',False)
+        return self.env.context.get('stock_move_id',False)
     
     def _get_is_printable(self):
-        context = self.env.context
-        if context is None : context = {}
-        return context.get('is_printable', False)
+        return self.env.context.get('is_printable', False)
 
     _name = 'choice.configuration'
 
@@ -160,67 +185,72 @@ class ChoiceConfiguration(models.Model):
         if (largeur != 0.0 and hauteur != 0.0):
             if res_req:
                 bom_id = res_req['id']
-            else:
-                bom_id = False
 
-            #Recupération sale_line (ligne de commande)
-            if stock_move and stock_move.sale_line_id:
-                sale_line_id = stock_move.sale_line_id
-            else:
-                raise exceptions.ValidationError("Ce mouvement n'est lié à aucun bon de commande")
-            vals = {
-                'origin': stock_move.origin,
-                'product_id': stock_move.product_id.id,
-                'product_qty': stock_move.product_qty,
-                'product_uom_id': stock_move.product_uom.id,
-                # 'product_uos_qty': stock_move.product_uos and stock_move.product_uos_qty or False,
-                # 'product_uos': stock_move.product_uos and stock_move.product_uos.id or False,
-                'location_src_id': stock_move.location_id.id,
-                'location_dest_id': stock_move.location_dest_id.id,
-                'bom_id': bom_id,
-                'date_planned': stock_move.date_expected,
-                'move_prod_id': stock_move.id,
-                'company_id': stock_move.company_id.id,
-                'largeur': stock_move.largeur,
-                'hauteur': stock_move.hauteur,
-                'is_printable':stock_move.is_printable,
-                'description':stock_move.name,
-                'partner_id':stock_move.picking_id.partner_id.id,
+                #Recupération sale_line (ligne de commande)
+                if stock_move and stock_move.sale_line_id:
+                    sale_line_id = stock_move.sale_line_id
+                else:
+                    raise exceptions.ValidationError("Ce mouvement n'est lié à aucun bon de commande")
                 
-                #mim wizard
-                'dimension':sale_line_id.dimension,
-                'vitre':sale_line_id.vitre.id,
-                'type_vitre':sale_line_id.type_vitre,
-                'decoratif' :sale_line_id.decoratif.id, 
-                'poigne' :sale_line_id.poigne.id,
-                'nb_poigne':sale_line_id.nb_poigne,
-                'serr' :sale_line_id.serr.id,
-                'nb_serr':sale_line_id.nb_serr,
-                'oscillo_battant':sale_line_id.oscillo_battant,
-                'va_et_vient':sale_line_id.va_et_vient,
-                'butoir':sale_line_id.butoir,
-                'remplissage_vitre':sale_line_id.remplissage_vitre,
-                'type_fixe':sale_line_id.type_fixe,
-                'inegalite':sale_line_id.inegalite,
-                'cintre':sale_line_id.cintre,
-                'triangle':sale_line_id.triangle,
-                'division':sale_line_id.division,
-                'nb_division':sale_line_id.nb_division,
-                'laque':sale_line_id.laque,
-                'moustiquaire':sale_line_id.moustiquaire,
-                'tms':sale_line_id.tms,
-                'type_moustiquaire':sale_line_id.type_moustiquaire,
-                'intermediaire':sale_line_id.intermediaire,
-            }
-            production_obj = self.env['mrp.production']
-            id_mo = production_obj.create(vals)
-            val = {
-                'id_mo' : id_mo,
-                'user_id' : self.env.uid,
-                'is_mo_created' : True,
-            }
-            stock_move.write(val)
+                vals = {
+                    'origin': stock_move.origin,
+                    'product_id': stock_move.product_id.id,
+                    'product_qty': stock_move.product_qty,
+                    'product_uom_id': stock_move.product_uom.id,
+                    # 'product_uos_qty': stock_move.product_uos and stock_move.product_uos_qty or False,
+                    # 'product_uos': stock_move.product_uos and stock_move.product_uos.id or False,
+                    'location_src_id': stock_move.location_id.id,
+                    'location_dest_id': stock_move.location_dest_id.id,
+                    'bom_id': bom_id,
+                    'date_planned': stock_move.date_expected,
+                    'move_prod_id': stock_move.id,
+                    'company_id': stock_move.company_id.id,
+                    'largeur': stock_move.largeur,
+                    'hauteur': stock_move.hauteur,
+                    'is_printable':self.is_printable,
+                    'description':stock_move.name,
+                    'partner_id':stock_move.partner_id.id,
+                    
+                    #mim wizard
+                    'dimension':sale_line_id.dimension,
+                    'vitre':sale_line_id.vitre.id,
+                    'type_vitre':sale_line_id.type_vitre,
+                    'decoratif' :sale_line_id.decoratif.id, 
+                    'poigne' :sale_line_id.poigne.id,
+                    'nb_poigne':sale_line_id.nb_poigne,
+                    'serr' :sale_line_id.serr.id,
+                    'nb_serr':sale_line_id.nb_serr,
+                    'oscillo_battant':sale_line_id.oscillo_battant,
+                    'va_et_vient':sale_line_id.va_et_vient,
+                    'butoir':sale_line_id.butoir,
+                    'remplissage_vitre':sale_line_id.remplissage_vitre,
+                    'type_fixe':sale_line_id.type_fixe,
+                    'inegalite':sale_line_id.inegalite,
+                    'cintre':sale_line_id.cintre,
+                    'triangle':sale_line_id.triangle,
+                    'division':sale_line_id.division,
+                    'nb_division':sale_line_id.nb_division,
+                    'laque':sale_line_id.laque,
+                    'moustiquaire':sale_line_id.moustiquaire,
+                    'tms':sale_line_id.tms,
+                    'type_moustiquaire':sale_line_id.type_moustiquaire,
+                    'intermediaire':sale_line_id.intermediaire,
+                }
+                # _logger.info("\n*****vals = %s*****\n" % vals)
+                production_obj = self.env['mrp.production']
+                id_mo = production_obj.create(vals)
+                
+                val = {
+                    'id_mo' : id_mo,
+                    'user_id' : self.env.uid,
+                    'is_mo_created' : True,
+                }
+                stock_move.write(val)
+            
+            else:
+                raise exceptions.ValidationError('Il n\'existe pas de nomenclature pour cet article')
         else:
-            raise exceptions.ValidationError('Veuillez saisir contre mesure')
+            raise exceptions.ValidationError('Veuillez saisir les contre-mesures avant de valider')    
 
         return True
+
