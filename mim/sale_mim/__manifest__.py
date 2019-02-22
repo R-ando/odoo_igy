@@ -22,10 +22,7 @@
     'data': [
         'views/sale_view.xml',
         'views/product_view.xml',
-        'views/sale_count_bom.xml',
-        'views/sale_count_all_bom.xml',
         'wizard/sale_order_line_advance_view.xml',
-        'wizard/sale_order_line_count_wizard.xml',
     ],
 
     'icon': 'sale_mim/static/src/img/icon.png',

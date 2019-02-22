@@ -75,7 +75,7 @@
 
                 <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" states="draft,confirmed,assigned,contre_mesure,flowsheeting" />
 
-                <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" />
+                <button class="highlight" name="change_state_to_waiting" type="object" string="Annuler contre mesure" states="contre_mesure"/>
 
                 <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" />
 
@@ -89,11 +89,11 @@
             <xpath expr="//group[@name='quants_grp']" position="before">
                 <group col="2">
 
-
                     <group string="Contre-mesure">
-                        <field name="largeur"/>
-                        <field name="hauteur"/>
+                        <field name="largeur" />
+                        <field name="hauteur" />
                     </group>
+
                     <group string="Ordre de fabrication">
                         <field name="user_id" readonly="1"/>
                         <field name="is_printable"/>
@@ -104,5 +104,6 @@
             </xpath>
         </field>
     </record>
+
 
 </odoo>

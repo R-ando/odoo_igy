@@ -221,29 +221,3 @@ class MrpComponent(models.Model):
         record.line_id.component_exist = True
         record.line_id.component_id = record
         return record
-
-    #Permet de sauvegarder le contenu des sous-composants mrp.component
-    @api.multi
-    def save_component(self):
-        comp_obj = self.env['mrp.component']
-        bom_line_obj = self.env['mrp.bom.line']
-        comp = self.browse([0])
-
-        vals = {
-            'product_parent_id' : comp.parent_id.id,
-            'line_id' : comp.line_id.id,
-            'component_exist' : True,
-        }
-
-        comp_obj.write(vals)
-        #compenent_id : nécéssaire pour ouvrir act_window open_view_component()
-        #component_exist à True : pour dire que le sous composant a déjà été crée
-        val = {
-        'component_exist':True, 
-        'component_id':self.env.ids[0]
-        }
-
-        bom_line_obj.write([comp.line_id.id],val)
-
-        return {'type':'ir.actions.act_window_close'}
-

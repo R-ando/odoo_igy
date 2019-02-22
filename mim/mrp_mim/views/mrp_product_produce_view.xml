@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<record model="ir.ui.view" id="view_mrp_product_produce_wizard_inherit">
+	    <field name="name">mrp.product.produce.wizard.inherit</field>
+	    <field name="model">mrp.product.produce</field>
+	    <field name="inherit_id" ref="mrp.view_mrp_product_produce_wizard" />
+	    <field name="arch" type="xml">
+	        <xpath expr="//field[@name='product_qty']" position="after">
+	            <group col="6" string="Ligne de produits">
+	            	<field name="produce_line_ids" >
+	            	<tree string="A consommer" >
+	            		<field name="product_id" />
+	            		<field name="qty_to_consume" />
+	            	</tree>
+	            </field>
+	            </group>
+	        </xpath>
+	    </field>
+	</record>
+</odoo>

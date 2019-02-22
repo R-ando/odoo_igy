@@ -22,7 +22,9 @@
     'data': [
         'views/mrp_bom_view.xml',
         'views/mrp_production_view.xml',
-        'views/mrp_view.xml',
+        'views/mrp_report.xml',
+        # 'views/mrp_product_produce_view.xml',
+        # 'views/mrp_production_product_view.xml',
     ],
 
     'icon': 'mrp_mim/static/src/img/icon.png',

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields
 
-
+#classe pour stocker les lignes du produits
 class MrpProductionProductLine(models.Model):
 
     _name = 'mrp.production.product.line'
@@ -15,25 +15,25 @@ class MrpProductionProductLine(models.Model):
     production_id = fields.Many2one(
         comodel_name='mrp.production',
         string='Production Order',
-        )
+    )
     product_qty = fields.Float(
         string='Product Qty',
-        )
+    )
     name = fields.Text(
-        string='Name',)
+        string='Name',
+    )
     product_id = fields.Many2one(
         'product.product',
-        string='Product',)
+        string='Product',
+    )
     product_uom_id = fields.Many2one(
         'product.uom',
         string='Uom Product',
-        )
+    )
 
-    @api.multi
     def product_id_change(self, product_id):
         if product_id:
-            # retourne un objet; browse(product_id).id ny taloha
-            product = self.env['product.product'].browse(product_id)
+            product = self.env['product.product'].product_id
             product_id_vals = {
                 'product_uom': product.uom_id.id,
                 'name': product.name
@@ -41,6 +41,7 @@ class MrpProductionProductLine(models.Model):
         return {'value': product_id_vals}
 
 
+#Classe pour stocker les composants de la nomenclature
 class MrpProductionProductComponentLine(models.Model):
     _name = 'mrp.production.product.component.line'
 
@@ -58,11 +59,9 @@ class MrpProductionProductComponentLine(models.Model):
         string="Longueur total")
     production_id = fields.Many2one(
         string="Production Order",
-        comodel_name="mrp.production",
-        ondelete='cascade',
-        )
+        comodel_name="mrp.production")
 
-
+#Classe pour stocker les accessoires de la nomenclature
 class MrpProductionProductAccessoryLine(models.Model):
     _name = 'mrp.production.product.accessory.line'
 
@@ -76,6 +75,4 @@ class MrpProductionProductAccessoryLine(models.Model):
         string="Quantité total")
     production_id = fields.Many2one(
         string="Production Order",
-        comodel_name="mrp.production",
-        ondelete='cascade',
-        )
+        comodel_name="mrp.production")

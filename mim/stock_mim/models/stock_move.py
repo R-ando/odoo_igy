@@ -82,18 +82,13 @@ class StockMove(models.Model):
 
     # Fonction changeant les etats
     @api.multi
-    def change_state_to_waiting(self):
-        self.write({
-            'state': 'confirmed',
-        })
-        return True
-
-    @api.multi
     def change_state_to_contre_mesure(self):
+
         self.write({
             'state' : 'contre_mesure',
             'largeur' : self.largeur,
             'hauteur' : self.hauteur,
+            # 'is_printable' : True,
             })
         return True
 
@@ -101,13 +96,14 @@ class StockMove(models.Model):
     def change_state_to_fiche_debit(self):
         self.write({
             'state' : 'flowsheeting',
+            #'is_printable' : True,
             })
         return True
 
     @api.multi
-    def change_state_to_mo(self):
+    def change_state_to_waiting(self):
         self.write({
-            'state' : 'done',
+            'state' : 'confirmed',
             })
         return True
     
@@ -174,9 +170,11 @@ class ChoiceConfiguration(models.Model):
     def update_stock_move(self):
         stock_move_id = self.stock_move_id
         stock_move = self.env['stock.move'].browse(stock_move_id)
+        _logger.info("\n*****stock_move = %s*****\n" % stock_move)
         self.env.cr.execute('''SELECT mrp_bom.id FROM mrp_bom INNER JOIN product_product 
-           ON mrp_bom.product_id = product_product.id WHERE product_product.id={0}'''
-           .format(stock_move.product_id.id))
+            ON mrp_bom.product_id = product_product.id WHERE product_product.id={0}'''
+            .format(stock_move.product_id.id))
+        
         res_req = self.env.cr.dictfetchone()
         
         largeur = stock_move.largeur
