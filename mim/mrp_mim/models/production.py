@@ -196,9 +196,27 @@ class MrpProduction(models.Model):
         })
 
     @api.multi
-    def action_validation(self):
+    def set_state_to_verified(self):
+        self.write({
+            'state': 'verified'
+        })
+
+    @api.multi
+    def set_state_to_confirmed(self):
+        self.write({
+            'state': 'confirmed'
+        })
+
+    @api.multi
+    def set_state_to_validated(self):
         self.write({
             'state': 'validated'
+        })
+
+    @api.multi
+    def moves_ready(self):
+        self.write({
+            'state': 'progress'
         })
 
     # </work_flow>
