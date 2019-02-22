@@ -38,7 +38,25 @@
         </field>
     </record>
 
-    
+    <!-- Groupe d'utilisateur d'états -->
+    <record model="res.groups" id="base.group_contre_mesure">
+        <field name="name">Utilisateurs contre mesure</field>
+    </record>
+
+    <record model="res.groups" id="base.group_fiche_debit">
+        <field name="name">Utilisateurs fiche de debit</field>
+    </record>
+
+    <!--Groupe ordre de fabrication -->
+    <record model="res.groups" id="base.create_mo">
+        <field name="name">Créer ordre de fabrication</field>
+    </record>
+
+    <record model="res.groups" id="base.view_mo">
+        <field name="name">Voir ordre de fabrication</field>
+    </record>
+
+    <!-- Formulaire stock move -->
     <record model="ir.ui.view" id="view_stock_picking_form">
         <field name="name">stock.move.form.inherit</field>
         <field name="model">stock.move</field>
@@ -46,19 +64,25 @@
         <field name="inherit_id" ref="stock.view_move_picking_form" />
         <field name="arch" type="xml">
 
-            <!-- Bouton sur au dessus du state-->
-            <xpath expr="//field[@name='state']" position="after">
-                <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight"  />
+            <!-- Enlèvement de certain états -->
+            <xpath expr="//field[@name='state']" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,contre_mesure,flowsheeting,assigned,done" />
+            </xpath>
 
-                <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" />
+            <!-- Bouton sur au dessus du state-->
+            <xpath expr="//field[@name='state']" position="before">
+                <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight" states="draft,confirmed,assigned,flowsheeting,contre_mesure" />
+
+                <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" states="draft,confirmed,assigned,contre_mesure,flowsheeting" />
 
                 <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" />
 
                 <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" />
 
-                <button type="object" name="act_view_mo" string="Voir l'ordre de fabrication" class="oe_highlight" />
+                <button type="object" name="act_view_mo" states="flowsheeting" string="Voir l'ordre de fabrication" class="oe_highlight" attrs="{'invisible': [('is_mo_created','=', False)]}" />
 
-                <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight"  />
+                <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight" 
+                attrs="{'invisible': ['|',('is_mo_created', '=', 'True'),('state','not in',('contre_mesure'))]}" />
             </xpath>
 
             <!-- Groupe composant mo & contre_mesure -->
