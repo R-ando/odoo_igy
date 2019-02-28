@@ -676,13 +676,5 @@ class MrpProduction(models.Model):
                         'line_id': line[1]['line_id'],
                         'is_accessory': line[1]['is_accessory'],
                     })
-
-            # Mise à jour de l'objet mrp.production
-            # prod_obj = self.env['mrp.production']
-
-            # calculate consumption
-            if not self.is_calculated and not (self.state == 'done' or self.state == 'cancel'):
-                self.count_raw_materials(results)
-                self.write({'is_calculated': True})
-
+                    
         return results
