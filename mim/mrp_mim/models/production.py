@@ -420,28 +420,28 @@ class MrpProduction(models.Model):
     # <last_commit>
 
     # new method
-    @api.multi
-    def count_raw_materials(self, results):
-        raw_materials_obj = self.env['mrp.rawmaterials.count']
-        for result in results:
-            # find if the product already exist
-            product_obj = result[0]
-            res_id = raw_materials_obj.search([('product_id', '=', product_obj.product_id.product_tmpl_id.id)])
-            if res_id:
-                # exist, then we update
-                total_qty = res_id.product_qty + result[1]['qty']
-                res_id.write({'product_qty': total_qty})
-            else:
-                # !exist, then we create
-                data = {
-                    'product_name': product_obj.product_id.product_tmpl_id.name,
-                    'product_id': product_obj.product_id.product_tmpl_id.id,
-                    'product_qty': result[1]['qty'],
-                    'product_uom_id': product_obj.product_uom_id.id,
-                    'product_uom_name': product_obj.product_uom_id.name,
-                    'product_cat_name': product_obj.product_id.product_tmpl_id.categ_id.name
-                }
-                raw_materials_obj.create(data)
+    # @api.multi
+    # def count_raw_materials(self, results):
+    #     raw_materials_obj = self.env['mrp.rawmaterials.count']
+    #     for result in results:
+    #         # find if the product already exist
+    #         product_obj = result[0]
+    #         res_id = raw_materials_obj.search([('product_id', '=', product_obj.product_id.product_tmpl_id.id)])
+    #         if res_id:
+    #             # exist, then we update
+    #             total_qty = res_id.product_qty + result[1]['qty']
+    #             res_id.write({'product_qty': total_qty})
+    #         else:
+    #             # !exist, then we create
+    #             data = {
+    #                 'product_name': product_obj.product_id.product_tmpl_id.name,
+    #                 'product_id': product_obj.product_id.product_tmpl_id.id,
+    #                 'product_qty': result[1]['qty'],
+    #                 'product_uom_id': product_obj.product_uom_id.id,
+    #                 'product_uom_name': product_obj.product_uom_id.name,
+    #                 'product_cat_name': product_obj.product_id.product_tmpl_id.categ_id.name
+    #             }
+    #             raw_materials_obj.create(data)
 
     # Retourne BOM structure
     @api.multi
