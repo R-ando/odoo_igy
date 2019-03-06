@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, exceptions
+from odoo.osv import osv
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -11,6 +12,7 @@ class StockMove(models.Model):
         string="Créateur de l'Ordre de Fabrication",
         comodel_name="res.users")
 # mrp
+    picking_id = fields.Many2one('stock.picking', 'Transfer Reference', index=True, states={'done': [('readonly','=', True)]})
     id_mo = fields.Integer(
         string="Id manufacturing order")
     is_mo_created = fields.Boolean(
@@ -54,7 +56,7 @@ class StockMove(models.Model):
 
     #Surcharge write pour stock.move
     @api.multi
-    def write(self,vals):        
+    def write(self,vals):
         _logger.info("\n*****self1 = %s*****\n" % self)
         return super(StockMove, self).write(vals)
 
@@ -81,7 +83,7 @@ class StockMove(models.Model):
             'state' : 'done',
             })
         return True
-    
+
     #Fct voir l'ordre de fabrication
     @api.multi
     def act_view_mo(self):
@@ -100,7 +102,7 @@ class StockMove(models.Model):
             'nodestroy' : True,
         }
 
-    
+
     #Fct confirmation mo et fiche de debit
     @api.multi
     def confirm_config_mo(self):
@@ -121,6 +123,21 @@ class StockMove(models.Model):
             'context' : ctx,
         }
 
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        variant_ids_list = []
+        if self._context.get('group_id'):
+            group_id = self.env["procurement.group"].browse(self._context.get('group_id'))
+            for variant_id in group_id.product_variant_ids:
+                if variant_id.rule_id == 1 :
+                    variant_ids_list.append(variant_id.id)
+        return {
+            'domain':{
+                'product_id':[[('id','in',variant_ids_list)]]
+            }
+        }
+
+
 
 #Classe pour le choix de configuration
 class ChoiceConfiguration(models.Model):
@@ -128,7 +145,7 @@ class ChoiceConfiguration(models.Model):
         context = self.env.context
         if context is None : context = {}
         return context.get('stock_move_id',False)
-    
+
     def _get_is_printable(self):
         context = self.env.context
         if context is None : context = {}
@@ -138,7 +155,7 @@ class ChoiceConfiguration(models.Model):
 
     is_printable = fields.Boolean(
         string='La fiche de débit est une fiche standard',
-        default=_get_is_printable 
+        default=_get_is_printable
     )
     stock_move_id = fields.Integer(
         string='Id courant du stock move line',
@@ -149,11 +166,11 @@ class ChoiceConfiguration(models.Model):
     def update_stock_move(self):
         stock_move_id = self.stock_move_id
         stock_move = self.env['stock.move'].browse(stock_move_id)
-        self.env.cr.execute('''SELECT mrp_bom.id FROM mrp_bom INNER JOIN product_product 
+        self.env.cr.execute('''SELECT mrp_bom.id FROM mrp_bom INNER JOIN product_product
            ON mrp_bom.product_id = product_product.id WHERE product_product.id={0}'''
            .format(stock_move.product_id.id))
         res_req = self.env.cr.dictfetchone()
-        
+
         largeur = stock_move.largeur
         hauteur = stock_move.hauteur
 
@@ -186,12 +203,12 @@ class ChoiceConfiguration(models.Model):
                 'is_printable':stock_move.is_printable,
                 'description':stock_move.name,
                 'partner_id':stock_move.picking_id.partner_id.id,
-                
+
                 #mim wizard
                 'dimension':sale_line_id.dimension,
                 'vitre':sale_line_id.vitre.id,
                 'type_vitre':sale_line_id.type_vitre,
-                'decoratif' :sale_line_id.decoratif.id, 
+                'decoratif' :sale_line_id.decoratif.id,
                 'poigne' :sale_line_id.poigne.id,
                 'nb_poigne':sale_line_id.nb_poigne,
                 'serr' :sale_line_id.serr.id,
@@ -212,15 +229,18 @@ class ChoiceConfiguration(models.Model):
                 'type_moustiquaire':sale_line_id.type_moustiquaire,
                 'intermediaire':sale_line_id.intermediaire,
             }
+
             production_obj = self.env['mrp.production']
             id_mo = production_obj.create(vals)
             val = {
                 'id_mo' : id_mo,
                 'user_id' : self.env.uid,
                 'is_mo_created' : True,
+                'id' : stock_move_id,
             }
-            stock_move.write([stock_move_id], val)
+            stock_move.write(val)
         else:
             raise exceptions.ValidationError('Veuillez saisir contre mesure')
 
         return True
+

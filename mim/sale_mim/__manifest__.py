@@ -22,6 +22,7 @@
     'data': [
         'views/sale_view.xml',
         'views/product_view.xml',
+        'report/report_commande_avancé.xml',
         'wizard/sale_order_line_advance_view.xml',
     ],
 

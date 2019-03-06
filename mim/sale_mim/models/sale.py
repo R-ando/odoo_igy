@@ -92,6 +92,21 @@ class SaleOrderLine(models.Model):
             ('sans', u'Sans intermédiaire'),
             ('avec', u'Avec intermédiaire')])
 
+    bom_id = fields.Many2one(
+        comodel_name='mrp.bom',
+        string='Bom ID',
+        compute='_get_bom_id'
+    )
+
+    @api.multi
+    @api.depends('product_id')
+    def _get_bom_id(self):
+        bom_obj = self.env['mrp.bom']
+        for record in self:
+            bom_obj_id = bom_obj.search([('product_id', '=', record.product_id.id)])
+            if bom_obj_id:
+                record.bom_id = bom_obj_id.id
+
 #   Sale_inherit
     @api.depends('largeur', 'hauteur')
     def _get_mesure(self):

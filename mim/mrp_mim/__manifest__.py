@@ -24,6 +24,9 @@
         'views/mrp_production_view.xml',
         # 'views/mrp_production_product_view.xml',
         'views/mrp_view.xml',
+        #'views/templates.xml',
+        'views/mrp_report.xml',
+        'wizard/mrp_production.xml',
     ],
 
     'icon': 'mrp_mim/static/src/img/icon.png',

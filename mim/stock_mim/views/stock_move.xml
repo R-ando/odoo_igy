@@ -49,17 +49,18 @@
             <!-- Bouton sur au dessus du state-->
             <xpath expr="/form/header" position="after">
                 <div>
-                    <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight"  style="margin-right:5px"/>
+                    <button type="object" name="change_state_to_contre_mesure" string="Contre-mesure" class="oe_highlight" states="draft,confirmed,assigned,flowsheeting,contre_mesure" style="margin-right:5px"/>
 
-                    <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" style="margin-right:5px"/>
+                    <button type="object" name="change_state_to_fiche_debit" string="Fiche de débit" class="oe_highlight" states="draft,confirmed,assigned,contre_mesure,flowsheeting" style="margin-right:5px" />
 
-                    <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler contre mesure" states="contre_mesure" style="margin-right:5px"/>
+                    <button class="highlight" name="change_state_to_waiting" type="object" string="Annuler contre mesure" states="contre_mesure" style="margin-right:5px"/>
 
                     <button class="highlight" name="change_state_to_contre_mesure" type="object" string="Annuler Fiche debit" states="flowsheeting" style="margin-right:5px"/>
 
-                    <button type="object" name="act_view_mo" string="Voir l'ordre de fabrication" class="oe_highlight" style="margin-right:5px"/>
+                    <button type="object" name="act_view_mo" states="flowsheeting" string="Voir l'ordre de fabrication" class="oe_highlight" attrs="{'invisible': [('is_mo_created','=', False)]}" style="margin-right:5px"/>
 
-                    <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight" style="margin-right:5px" />
+                    <button type="object" name="confirm_config_mo" string="Créer l'ordre de fabrication" class="oe_highlight"
+                    attrs="{'invisible': ['|',('is_mo_created', '=', 'True'),('state','not in',('contre_mesure'))]}" style="margin-right:5px"/>
                 </div>
 
             </xpath>

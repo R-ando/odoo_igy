@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_fiche_de_paie" model="report.paperformat">
+            <field name="name">European A4 Landscape</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">26</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">1000</field>
+            <field name="dpi">90</field>
+        </record>
+        <report
+            id="paie_mim_report_fiche_de_paie"
+            string="Fiche de Paie Malagasy"
+            model="hr.payslip"
+            report_type="qweb-pdf"
+            name="paie_mim.report_fiche_de_paie"
+            file="paie_mim.report_fiche_de_paie"
+            paperformat="paperformat_fiche_de_paie"
+            />
+        <template id="report_fiche_de_paie">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                           <table style="width:100%">
+                               <tr>
+                                   <td style="width:46%">
+                                       <div style="width:100%;">
+                                               <div class="text-center" style="width:90%;border:2px solid black;padding: 5px 5px 5px 5px;font-size:20px;">
+                                                   <b>BULLETIN DE PAIE</b>
+                                               </div>
+                                               <div class="text-center"><b>PAIE DU <span t-field="o.date_from"/> AU <span t-field="o.date_to" /></b>
+                                               </div>
+                                       </div>
+                                       <div style="padding: 5px 5px 5px 5px;border:2px solid black;">
+                                           <table style="width:100%;">
+                                               <tr>
+                                                   <td>
+                                                      Matricule :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.employee_id.num_emp">
+                                                          <span t-field="o.employee_id.num_emp" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Num CNAPS :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.employee_id.num_cnaps_emp">
+                                                          <span t-field="o.employee_id.num_cnaps_emp" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Emploi :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.contract_id.job_id.name">
+                                                          <span t-field="o.contract_id.job_id.name" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Catégorie :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.contract_id.categorie">
+                                                          <span t-field="o.contract_id.categorie" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Echellon :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.contract_id.echelon">
+                                                          <span t-field="o.contract_id.echelon" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Indice :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.contract_id.indice">
+                                                          <span t-field="o.contract_id.indice" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      Entrée :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.contract_id.date_start">
+                                                          <span t-field="o.contract_id.date_start" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                      Sortie : <t t-if="o.contract_id.date_end">
+                                                                  <span t-field="o.contract_id.date_end" />
+                                                               </t>
+                                                               <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                   </td>
+                                                   <td>
+                                                   </td>
+                                               </tr>
+                                               <tr>
+                                                   <td>
+                                                      ORG Médicale :
+                                                   </td>
+                                                   <td>
+                                                      <t t-if="o.employee_id.company_id.org_sante">
+                                                          <span t-field="o.employee_id.company_id.org_sante" />
+                                                      </t>
+                                                      <t t-else="">_</t>
+                                                   </td>
+                                               </tr>
+                                           </table>
+                                       </div>
+                                   </td>
+
+                                   <!-- le tsis ninin -->
+                                   <td style="width:8%"></td>
+
+                                   <td style="width:46%">
+                                       <div style="padding: 5px 5px 5px 5px;border:2px solid black;">
+                                          <table style="width:100%;">
+                                           <tr>
+                                               <td>
+                                                   <t t-if="o.employee_id.company_id.partner_id.title.name">
+                                                       <span t-field="o.employee_id.company_id.partner_id.title.name" />
+                                                   </t>
+                                                   <t t-else=""></t><span> </span>
+                                                   <t t-if="o.employee_id.company_id.name">
+                                                       <span t-field="o.employee_id.company_id.name" />
+                                                   </t>
+                                                   <t t-else="">_</t>
+                                               </td>
+                                           </tr>
+                                           <tr>
+                                               <td>
+                                                  <t t-if="o.employee_id.company_id.street">
+                                                      <span t-field="o.employee_id.company_id.street" />
+                                                  </t>
+                                                  <t t-else="">_</t>
+                                               </td>
+                                           </tr>
+                                           <tr>
+                                               <td>
+                                                  <t t-if="o.employee_id.company_id.street2">
+                                                      <span t-field="o.employee_id.company_id.street2" />
+                                                  </t>
+                                                  <t t-else=""></t>
+                                               </td>
+                                           </tr>
+                                           <tr>
+                                               <td>
+                                                  SIRET : <t t-if="o.employee_id.company_id.siret">
+                                                             <span t-field="o.employee_id.company_id.siret" />
+                                                          </t>
+                                                          <t t-else="">_</t> APE : <t t-if="o.employee_id.company_id.ape">
+                                                                                     <span t-field="o.employee_id.company_id.ape" />
+                                                                                   </t>
+                                                                                   <t t-else="">_</t>
+                                               </td>
+                                           </tr>
+                                       </table>
+                                   </div><br/>
+
+                                       <!-- Anaran employe -->
+                                       <p>
+                                           <t t-if="o.employee_id.name">
+                                              <span t-field="o.employee_id.name" />
+                                           </t>
+                                           <t t-else="">_</t><br/>
+                                           <t t-if="o.employee_id.address_home_id">
+                                              <span t-field="o.employee_id.address_home_id" />
+                                           </t>
+                                           <t t-else="">_</t>
+                                       </p>
+                                   </td>
+                               </tr>
+                           </table><br/>
+                           <div style="width:100%;padding-left:10px;padding-right:20px">
+                               <table class="table table-bordered" style="width:100%">
+                               <thead>
+                                  <tr>
+                                       <th rowspan="2" class="text-center" style="width:19%;padding-top:0px;">DESIGNATION</th>
+                                       <th rowspan="2" class="text-center" style="width:13%;padding-top:0px;">BASE</th>
+                                       <th rowspan="2" class="text-center" style="width:8%;padding-top:0px;">TAUX</th>
+                                       <th rowspan="2" class="text-center" style="width:13%;padding-top:0px;">QUANTITE</th>
+                                       <th rowspan="2" class="text-center" style="width:13%;padding-top:0px;">A PAYER</th>
+                                       <th rowspan="2" class="text-center" style="width:13%;padding-top:0px;">A DEDUIR</th>
+                                       <th colspan="2" class="text-center" rowspan="1" style="width:21%;padding-top:0px;">CHARGE PATRONALES</th>
+                                  </tr>
+                                  <tr>
+                                      <td style="width:8%">TAUX</td>
+                                      <td style="width:13%">MONTANT</td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="get_payslip_lines(o.line_ids)" t-as="p">
+                                    <td>
+                                        <span t-esc="p.name" />
+                                    </td>
+                                    <td>
+                                        <t t-if="p.amount_select== 'percentage'">
+                                           <span t-esc="p.amount or ''" /><br/>
+                                        </t>
+
+
+                                        <t t-if="p.amount_select== 'fix'">
+                                           <span t-esc="p.quantity or''" /><br/>
+                                        </t>
+
+                                        <t t-if="p.code=='CNAPS_EMP'">
+                                           <span t-esc="get_total_by_rule_category(o, 'GROSS')"/><br/>
+                                        </t>
+                                        <t t-if="p.code=='OMSI_EMP'">
+                                           <span t-esc="get_total_by_rule_category(o, 'GROSS')"/><br/>
+                                        </t>
+                                        <t t-if="p.code=='IRSA'">
+                                           <span t-esc="round(get_total_by_rule_category(o, 'GROSS')-get_total_by_rule_category(o,'CNAPS')-get_total_by_rule_category(o,'OMSI')-o.employee_id.company_id.abat_irsa*o.employee_id.children,2)"/><br/>
+                                        </t>
+                                    </td>
+                                      <td>
+                                        <t t-if="p.amount_select == 'percentage'">
+                                            <span t-esc="p.rate or ''" />
+                                        </t>
+                                        <t t-if="p.code=='CNAPS_EMP'">
+                                           <span t-esc="o.employee_id.company_id.cotisation_cnaps_emp or''" />
+                                        </t>
+                                        <t t-if="p.code=='OMSI_EMP'">
+                                           <span t-set="o.employee_id.company_id.cotisation_sante_emp or''" />
+                                        </t>
+                                        <t t-if="p.code=='IRSA'">
+                                           <span t-esc="o.employee_id.company_id.taux_irsa or''" />
+                                        </t>
+
+                                    </td>
+                                    <td>
+                                       <t t-if="p.code not in ['CNAPS_EMP','OMSI_EMP','IRSA','AVANCE15','AVANCESP','PRM']">
+                                           <span t-esc="get_employer_line(o,p) and get_employer_line(o,p).total or ''"/><br/>
+                                       </t>
+                                    </td>
+                                    <td>
+                                       <t t-if="p.code in ['BASIC','HS1','HS2','HMNUIT','HMJF','HMDIM','GROSS','NET','PRM']">
+                                           <span t-esc="p.total" />
+                                       </t>
+                                    </td>
+                                    <td>
+                                        <t t-if="p.code in ['CNAPS_EMP','OMSI_EMP','IRSA','AVANCE15','AVANCESP','AUTRES']">
+                                            <span t-esc="p.total" />
+                                        </t>
+                                    </td>
+                                    <td>
+                                       <t t-if="p.code=='CNAPS_EMP'">
+                                          <span t-esc="o.employee_id.company_id.cotisation_cnaps_patr" />
+                                       </t>
+                                       <t t-if="p.code=='OMSI_EMP'">
+                                          <span t-esc="o.employee_id.company_id.cotisation_sante_patr" />
+                                       </t>
+                                    </td>
+                                    <td>
+                                        <t t-if="p.code=='CNAPS_EMP'">
+                                            <span t-esc="round(get_total_by_rule_category(o,'CNAPS_PAT'),2)" />
+                                        </t>
+                                        <t t-if="p.code=='OMSI_EMP'">
+                                            <span t-esc="round(get_total_by_rule_category(o,'OMSI_PAT'),2)" />
+                                        </t>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                   <tr>
+                                      <td style="width:19%;">
+                                        <b>TOTAL</b>
+                                      </td>
+
+                                      <td style="width:13%;">
+                                      </td>
+
+                                      <td style="width:8%;">
+                                      </td>
+
+                                      <td style="width:13%;">
+                                      </td>
+
+                                      <td style="width:13%;">
+                                        <span t-esc="get_total_by_rule_category(o,'GROSS')" />
+                                      </td>
+
+                                      <td style="width:13%;">
+                                        <span t-esc="get_total_by_rule_category(o,'TOTAL_DED')" />
+                                      </td>
+
+                                      <td style="width:8%;">
+                                      </td>
+                                      <td style="width:13%;">
+                                        <span t-esc="get_total_by_rule_category(o,'CHARGE_PAT')" />
+                                      </td>
+                                  </tr>
+
+                                </tfoot>
+                               </table>
+
+                               <table style="width:100%">
+                                    <tr>
+                                      <td style="width:60%">Mode de reglement : <span t-set="o.contract_id.payment_mode" /><br/>
+                                      Paye le : <span t-esc="o.move_id.date or''" />
+                                      </td>
+                                      <td style="width:20%;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black;">
+                                        <b>NET A PAYER</b>
+                                      </td>
+                                      <td style="width:20%;border-top:2px solid black;border-left:2px solid black;border-right:2px solid black;">
+                                        <b>TOTAL CHARGES SALARIALES</b>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        Conv. Coll.: <span t-set="o.employee_id.company_id.conv_coll or ''" />
+                                      </td>
+                                      <td style="border-bottom:2px solid black;border-left:2px solid black;border-right:2px solid black">
+                                        <span t-esc="get_total_by_rule_category(o,'GROSS')-get_total_by_rule_category(o,'TOTAL_DED')" />
+                                      </td>
+                                      <td style="border-bottom:2px solid black;border-left:2px solid black;border-right:2px solid black">
+                                        <span t-esc="get_total_by_rule_category(o,'GROSS')+get_total_by_rule_category(o,'CHARGE_PAT')" />
+                                      </td>
+                                    </tr>
+                                </table>
+
+                                <br/><br/>
+                                <p>DANS VOTRE INTERET ET POUR VOUS AIDER A FAIRE VALOIR VOS DROITS, CONSERVEZ CE BULLETIN DE PAIE SANS LIMITATION DE DUREE</p>
+                           </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

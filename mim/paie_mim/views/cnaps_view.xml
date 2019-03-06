@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+		<!-- Vue filtré cnaps -->
+		<record model="ir.ui.view" id="hr_payroll_cnaps_tree_filter">
+		    <field name="name">hr.payroll.cnaps.tree.filter</field>
+		    <field name="model">cnaps</field>
+		    <field name="arch" type="xml">
+		    	<search string="Recherche">
+		    		<field name="num_emp" string="Matricule" />
+		    		<group>
+		    			<filter string="filtre par mois" icon="terp-personal+" domain="[]" context="{'group_by' : 'date_from'}" />
+		    			<filter string="nom" icon="terp-personal+" domain="[]" context="{'group_by' : 'name_related'}" />
+		    		</group>
+		    	</search>
+		    </field>
+		</record>
+
+		<!-- Vue tree cnaps -->
+		<record model="ir.ui.view" id="view_hr_payroll_cnaps_tree">
+		    <field name="name">hr.payroll.cnaps.tree</field>
+		    <field name="model">cnaps</field>
+		    <field name="type">tree</field>
+		    <field name="priority">0</field>
+		    <field name="arch" type="xml">
+		        <tree string="CNAPS" edit="false" create="false">
+		            <field name="num_emp" />
+		            <field name="employee_id" />
+		            <field name="basic" />
+		            <field name="brut" />
+		            <field name="cnaps" />
+		            <field name="cnapsemp" />
+		            <field name="totalcnaps" />
+		            <!-- <field name="totalcnaps" /> -->
+		            <field name="net" />
+		            <field name="date_from" />
+		            <field name="date_to" />
+		        </tree>
+		    </field>
+		</record>
+
+		<!-- Actions -->
+		<record model="ir.actions.act_window" id="open_payroll_cnaps">
+		    <field name="name">Etat CNAPS</field>
+		    <field name="res_model">cnaps</field>
+		    <field name="view_type">form</field>
+		    <field name="view_mode">tree,form</field>
+		    <field name="view_id" ref="view_hr_payroll_cnaps_tree" />
+		</record>
+</odoo>

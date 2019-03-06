@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_fiche_de_debit" model="report.paperformat">
+            <field name="name">European A4 Landscape</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">26</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">1000</field>
+            <field name="dpi">90</field>
+        </record>
+        <report
+            id="mrp_production_report_fiche_de_debit"
+            string="Fiche de debit"
+            model="mrp.production"
+            report_type="qweb-pdf"
+            name="mrp_mim.report_invoice"
+            file="mrp_mim.report_invoice"
+            paperformat="paperformat_fiche_de_debit"
+            />
+        <template id="report_invoice">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="text-center"><h4><strong>FICHE DE DEBIT</strong></h4></div>
+                            <div class="body">
+                                <table class="table table-condensed table-bordered" style="width: 100%">
+                                    <thead>
+                                        <th style="width: 5%;border:1px solid black">CT</th>
+                                        <th style="width: 45%;border:1px solid black"></th>
+                                        <th style="width: 5%;border:1px solid black">Date</th>
+                                        <th style="width: 45%;border:1px solid black"></th>
+                                    </thead>
+                                    <tbody>
+                                            <tr>
+                                                <td style="border:1px solid black">AFF</td>
+                                                <td style="border:1px solid black"></td>
+                                                <td style="border:1px solid black">liv</td>
+                                                <td style="border:1px solid black"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border:1px solid black">BC</td>
+                                                <td style="border:1px solid black"></td>
+                                                <td style="border:1px solid black">N°</td>
+                                                <td style="border:1px solid black"></td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                                <p>1.0</p>
+                                <p>CM:X</p>
+                                <table class="table table-condensed table-bordered" style="width: 100%">
+                                    <thead>
+                                        <th class="text-center" style="width: 17%;border:1px solid black">Ref</th>
+                                        <th class="text-center" style="width: 19%;border:1px solid black">Désignation</th>
+                                        <th class="text-center" style="width: 13%;border:1px solid black">Qté U</th>
+                                        <th class="text-center" style="width: 13%;border:1px solid black">Qté T</th>
+                                        <th class="text-center" style="width: 15%;border:1px solid black">Qté LU</th>
+                                        <th class="text-center" style="width: 15%;border:1px solid black">Qté LT</th>
+                                        <th class="text-center" style="width: 7%;border:1px solid black">Obs</th>
+                                    </thead>
+                                    <tbody>
+                                         <t t-foreach="o.product_lines1" t-as="p">
+                                             <tr>
+                                                 <td style="border:1px solid black">
+                                                     <span t-field="p.ref"/>
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                     <span t-field="p.name"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.product_qty)"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.product_qty_total)"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.len_unit)"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.len_total)"/>
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                 </td>
+                                             </tr>
+                                         </t>
+                                    </tbody>
+                                </table>
+                                <div class="text-center"><h4><strong>ACCESSOIRES</strong></h4></div>
+                                <table class="table table-condensed table-bordered" style="width: 100%">
+                                    <thead>
+                                        <th class="text-center" style="width: 36%;border:1px solid black">Référence</th>
+                                        <th class="text-center" style="width: 13%;border:1px solid black">Qté U</th>
+                                        <th class="text-center" style="width: 13%;border:1px solid black">Qté T</th>
+                                        <th class="text-center" style="width: 9.5%;border:1px solid black">Date de sortie</th>
+                                        <th class="text-center" style="width: 9.5%;border:1px solid black">Nom</th>
+                                        <th class="text-center" style="width: 9.5%;border:1px solid black">Signature</th>
+                                        <th class="text-center" style="width: 9.5%;border:1px solid black">Obs</th>
+                                    </thead>
+                                    <tbody>
+                                         <t t-foreach="o.product_lines2" t-as="p">
+                                             <tr>
+                                                 <td style="border:1px solid black">
+                                                     <span t-field="p.ref"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.product_qty)"/>
+                                                 </td>
+                                                 <td class="text-right" style="border:1px solid black">
+                                                     <span t-esc="float(p.product_qty_total)"/>
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                 </td>
+                                                 <td style="border:1px solid black">
+                                                 </td>
+                                             </tr>
+                                         </t>
+                                    </tbody>
+                                </table>
+                                <div class="text-center"><h4><strong>VISA</strong></h4></div>
+                                <table class="table table-condensed table-bordered" style="width:75%;margin-left:auto;margin-right:auto">
+                                    <thead>
+                                        <th class="text-center" style="width: 18.75%;border:1px solid black">Mr Mamy</th>
+                                        <th class="text-center" style="width: 18.75%;border:1px solid black">Mme Tiana</th>
+                                        <th class="text-center" style="width: 18.75%;border:1px solid black">Mme Lalaharisoa</th>
+                                        <th class="text-center" style="width: 18.75%;border:1px solid black">Mme Norosoa</th>
+                                    </thead>
+                                    <tbody>
+                                         <tr>
+                                             <td style="height:50px;border:1px solid black"></td>
+                                             <td style="height:50px;border:1px solid black"></td>
+                                             <td style="height:50px;border:1px solid black"></td>
+                                             <td style="height:50px;border:1px solid black"></td>
+                                         </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

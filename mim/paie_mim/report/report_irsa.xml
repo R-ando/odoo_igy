@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_irsa" model="report.paperformat">
+            <field name="name">European A4 Landscape</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">26</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">1000</field>
+            <field name="dpi">90</field>
+        </record>
+        <report
+            id="paie_mim_report_irsa"
+            string="Rapport IRSA"
+            model="irsa"
+            report_type="qweb-pdf"
+            name="paie_mim.report_irsa"
+            file="paie_mim.report_irsa"
+            paperformat="paperformat_irsa"
+            />
+        <template id="report_irsa">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="body">
+                                <div class="center">
+                                    <table class="table table-bordered">
+                                        <caption>IRSA</caption>
+                                        <tr>
+                                            <td>
+                                              <b>Nom</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.name_related" />
+                                            </td>
+                                            <td>
+                                              <b>ID</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.id" />
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <b>N° CIN</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="a.num_cin" />
+                                            </td>
+                                            <td>
+                                              <b>IRSA</b>
+                                            </td>
+                                            <td>
+                                              <span t-field="o.irsa" />
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <b>Numero matricule</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.num_emp" />
+                                            </td>
+                                            <td>
+                                              <b>Salaire brut</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.brut" />
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <b>Date début</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.date_from" />
+                                            </td>
+                                            <td>
+                                              <b>Salaire de base</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.basic" />
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td>
+                                              <b>Date fin</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.date_to" />
+                                            </td>
+                                            <td>
+                                              <b>Salaire net</b>
+                                            </td>
+                                            <td>
+                                                <span t-field="o.net" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+
+        </t>

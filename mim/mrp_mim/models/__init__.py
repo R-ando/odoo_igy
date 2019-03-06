@@ -2,4 +2,5 @@
 
 from . import bom
 from . import production
-# from . import production_product
+from . import production_product
+#before from . import production_product

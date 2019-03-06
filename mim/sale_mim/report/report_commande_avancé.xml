@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_commande_avancé" model="report.paperformat">
+            <field name="name">European A4 Landscape</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">26</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">1000</field>
+            <field name="dpi">90</field>
+        </record>
+        <report
+            id="gestion_paie_report_fiche_de_debit"
+            string="Devis/Commande avancé"
+            model="sale.order"
+            report_type="qweb-pdf"
+            name="sale_mim.report_commande_avancé"
+            file="sale_mim.report_commande_avancé"
+            paperformat="paperformat_commande_avancé"
+            />
+        <template id="report_commande_avancé">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="body">
+                                <table style="width: 100%">
+                                    <tr>
+                                        <td>
+                                            <span t-field="o.partner_id.name" />
+                                            <br/>
+                                            <span t-field="o.partner_id.street" />
+                                            <br/>
+                                            <t t-if="o.partner_id.city">
+                                               <span t-field="o.partner_id.city" /><br/>
+                                            </t>
+                                            <t t-if="o.partner_id.street2">
+                                               <span t-field="o.partner_id.street2" /><br/>
+                                            </t>
+                                            <t t-if="o.partner_id.phone">
+                                               Tel. :<span t-field="o.partner_id.phone" /><br/>
+                                            </t>
+                                            <t t-if="o.partner_id.email">
+                                               email :<span t-field="o.partner_id.email" /><br/>
+                                            </t>
+                                            <t t-if="o.partner_id.vat">
+                                               TVA : <span t-field="o.partner_id.vat" /><br/>
+                                            </t>
+                                            NIF &amp; STAT :
+                                            <t t-if="o.entete">
+                                               <strong><span t-field="o.entete" /></strong>
+                                            </t>
+                                        </td>
+
+                                        <td class="text-right">
+                                            <t t-if=" o.state not in ['draft','sent']">
+                                               <h3>Devis N°<span t-field="o.name" /></h3>
+                                               <strong>Date du devis <span t-field="o.date_order" /></strong>
+                                            </t>
+                                            <t t-else="">
+                                                 <h2>N° de commande <span t-field="o.name" /></h2><br/>
+                                                 <strong>Date de commande</strong>
+                                            </t>
+                                            <br/>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                                <table class="table table-striped" style="width: 100%">
+                                    <thead>
+                                        <th class="text-left" style="width: 30%;border-bottom:2px solid black;border-top:none;border-right:none;border-left:none">Description</th>
+                                        <th class="text-left" style="width: 15%;border-bottom:2px solid black;border-top:none;border-right:none;border-left:none"></th>
+                                        <th class="text-center" style="width: 15%;border-bottom:2px solid black;border-top:none;border-right:none;border-left:none">Quantité</th>
+                                        <th class="text-center" style="width: 15%;border-bottom:2px solid black;border-top:none;border-right:none;border-left:none">PU</th>
+                                        <th class="text-center" style="width: 25%;border-bottom:2px solid black;border-top:none;border-right:none;border-left:none">Prix</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="o.order_line" t-as="line">
+                                            <tr>
+                                                <td style="border-right:none;border-left:none">
+                                                   <span t-field="line.name" />
+                                                </td>
+                                                <td style="border-right:none;border-left:none">
+                                                   <t t-if="line.image">
+                                                       <span t-field="line.image" t-field-options='{"widget": "image"}'/>
+                                                   </t>
+                                                </td>
+                                                <td class="text-center" style="border-right:none;border-left:none">
+                                                   <span t-esc="int(line.product_uom_qty)"/>
+                                                </td>
+                                                <td class="text-center" style="border-right:none;border-left:none">
+                                                   <span t-esc="round(line.price_unit*1.2,2)" />
+                                                </td>
+                                                <td class="text-right" style="border-right:none;border-left:none">
+                                                   <span t-esc="round(line.price_subtotal*1.2,2)"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <!-- <span t-field="o.amount_total" /> -->
+                                </table>
+                                <table style="width: 100%">
+                                    <tr>
+                                         <td style="width: 65%"></td>
+                                         <td style="width: 10%;border-top:2px solid black">Total</td>
+                                         <td style="width: 25%;border-top:2px solid black" class="text-right">
+                                             <span t-esc="round(o.amount_untaxed*1.2,2)" /> Ar
+                                         </td>
+                                    </tr>
+                                </table>
+                                <p>
+                                   <strong>Arrêtée le présent devis à la somme de : "<span t-field="o.monnaie_lettre" />" <br/>
+                                   <i>Il est formellement interdit d'effectuer des paiements auprès des commerciaux. En cas de souhait de paiement hors de nos
+                                   locaux, merci de contacter le Siège.</i>
+                                   </strong><br/>
+                                    <t t-if="o.note">
+                                       <span t-field="o.note" />
+                                    </t>
+                                    <t t-if="o.payment_term_id.note">
+                                        <span t-field="o.payment_term_id.note" />
+                                    </t>
+                                    <t t-if="o.partner_id.property_payment_term_id.note">
+                                        <span t-field="o.partner_id.property_payment_term_id.note" />
+                                    </t>
+                                </p>
+                                <table style="width: 100%">
+                                    <tr style="height:5%;">
+                                        <td style="width: 20%"></td>
+                                        <td style="width: 20%"></td>
+                                        <td style="width: 40%">Bon de commande, le......................................</td>
+                                        <td style="width: 20%"></td>
+                                    </tr>
+                                    <tr style="height:5%;">
+                                        <td>M.I.M</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>LE CLIENT</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Devis valable 15 jours</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

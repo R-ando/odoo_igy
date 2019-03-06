@@ -1,0 +1,101 @@
+from odoo import models, fields, api
+
+class MrpTemporaire(models.TransientModel):
+    _name = "mrp.temporaire"
+
+    select_type = fields.Many2one(
+        string="Type",
+        comodel_name="product.product",
+        domain=[('categ_id', '=', 3)],
+        change_default=True)
+    largeur = fields.Float(
+        string="Largeur",
+        default=1.0)
+    hauteur = fields.Float(
+        string="Hauteur",
+        default=1.0)
+    quantity = fields.Integer(
+        string="Quantité",
+        default=1)
+    vitre = fields.Many2one(
+        string="Vitre",
+        comodel_name="mim.article",
+        domain=[('category_id', '=', 'Vitrage')])
+    type_vitre = fields.Selection(
+        string="",
+        selection=[('simple', 'Simple'), ('double', 'Double')])
+    decoratif = fields.Many2one(
+        string="Décoratif",
+        comodel_name="mim.article",
+        domain=[('category_id', '=', 'Decoratif')])
+    poigne = fields.Many2one(
+        string="Poignée",
+        comodel_name="mim.article",
+        domain=[('category_id', '=', 'Poignee')])
+    nb_poigne = fields.Integer(
+        string="Nombre",
+        default=1.0)
+    serr = fields.Many2one(
+        string="Serrure",
+        comodel_name="mim.article",
+        domain=[('category_id.name', '=', 'Serrure')])
+    nb_serr = fields.Integer(
+        string="Nombre",
+        default=1.0)
+    oscillo_battant = fields.Boolean(
+        string="Oscillo - battant")
+    va_et_vient = fields.Boolean(
+        string="Va et vient")
+    butoir = fields.Boolean(
+        string="Butoir")
+    remplissage_vitre = fields.Selection(
+        string='Remplissage vitre',
+        selection=[
+            ('standard', 'Standard'),
+            ('pleine_2_3', '2/3 pleine'),
+            ('pleine_1_2', '1/2 pleine'),
+            ('pleine_1_3', '1/3 pleine'),
+            ('pleine_bardage', 'Pleine/bardage')
+        ]
+    )
+    intermediaire = fields.Selection(
+        string=u"Intermédiaire",
+        selection=[
+            ('sans', u'Sans intermédiaire'),
+            ('avec', u'Avec intermédiaire'),
+        ]
+    )
+    type_fixe = fields.Selection(
+        string="Type Fixe",
+        selection=[
+            ('imposte', 'Imposte'),
+            ('soubassement', 'Soubassement'),
+            ('lateral', u'Latéral')
+        ]
+    )
+    inegalite = fields.Selection(
+        string=u"Inégalité",
+        selection=[
+            ('egaux', 'Egaux'),
+            ('inegaux', u'Inégaux')
+        ]
+    )
+    cintre = fields.Boolean(
+        string="Cintré")
+    triangle = fields.Boolean(
+        string="Triangle")
+    division = fields.Boolean(
+        string="Division")
+    nb_division = fields.Integer(
+        string="Nombre division",
+        default=1.0)
+    laque = fields.Boolean(
+        string="Laqué")
+    moustiquaire = fields.Boolean(
+        string="Moustiquaire")
+    tms = fields.Float(
+        string="TMS")
+
+
+
+

@@ -1,40 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <record model="ir.ui.view" id="view_stock_quantity_history_form_inherit">
-        <field name="name">stock.quantity.history.form.inherit</field>
-        <field name="model">stock.quantity.history</field>
-        <field name="type">form</field>
-        <field name="inherit_id" ref="stock_account.view_stock_quantity_history" />
-        <field name="arch" type="xml">
-            <xpath expr="/form/group/group" position="after">
-                 <div>
 
-                 </div>
-            </xpath>
+     <!-- le tree -->
+    <record model="ir.ui.view" id="view_stock_wizard_form">
+        <field name="name">stock.wizard.form</field>
+        <field name="model">stock.temp</field>
+        <field name="type">form</field>
+        <field name="priority">0</field>
+        <field name="arch" type="xml">
+            <form >
+               <field name="t">
+                    <tree create="false" delete="false">
+                        <field name="name" string="Article"/>
+                        <field name="virtual_available" string="Quantité"/>
+                        <field name="uom_id" string="Unité de mesure"/>
+                    </tree>
+                </field>
+
+                <footer>
+                    <button string="Calculer" name="open_rec" type="object" class="oe_highlight"/>
+                    <button string="Annuler" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
         </field>
     </record>
+
 
     <record model="ir.actions.act_window" id="action_mrp_wizard">
         <field name="name">Wizard label</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">stock.quantity.history</field>
+        <field name="res_model">stock.temp</field>
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="view_id" ref="view_stock_quantity_history_form_inherit" />
+        <field name="view_id" ref="view_stock_wizard_form" />
     </record>
 
     <menuitem
+        name="Calcul (MRP)"
+        parent="sale.sale_order_menu"
+        id="raw_materials_menu"
+        action="action_mrp_wizard"/>
+
+    <!-- <menuitem
         id="menu_mrp_wizard_cat"
-        name="MRP Vaovao"
-        parent="mrp.menu_mrp_root" />
+        name="Calcul"
+        parent="sale.sale_menu_root" />
 
     <menuitem
         id="menu_mrp_wizard_s"
-        name="MRP"
+        name="Matières premières"
         parent="menu_mrp_wizard_cat"
-        action="action_mrp_wizard"/>
+        action="action_mrp_wizard"/> -->
+
 
 
 </odoo>
